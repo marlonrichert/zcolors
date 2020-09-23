@@ -1,0 +1,342 @@
+#!/bin/zsh
+emulate -L zsh; setopt extendedglob rcquotes warncreateglobal
+
+if [[ ! -v color ]]; then
+  autoload -Uz colors
+  colors
+fi
+color+=(
+  italic $color[standout]
+  '38;5;0' black
+  '38;5;1' red
+  '38;5;2' green
+  '38;5;3' yellow
+  '38;5;4' blue
+  '38;5;5' magenta
+  '38;5;6' cyan
+  '38;5;7' white
+  '38;5;8' brightblack
+  '38;5;9' brightred
+  '38;5;10' brightgreen
+  '38;5;11' brightyellow
+  '38;5;12' brightblue
+  '38;5;13' brightmagenta
+  '38;5;14' brightcyan
+  '38;5;15' brightwhite
+  '48;5;0' bg-black
+  '48;5;1' bg-red
+  '48;5;2' bg-green
+  '48;5;3' bg-yellow
+  '48;5;4' bg-blue
+  '48;5;5' bg-magenta
+  '48;5;6' bg-cyan
+  '48;5;7' bg-white
+  '48;5;8' bg-brightblack
+  '48;5;9' bg-brightred
+  '48;5;10' bg-brightgreen
+  '48;5;11' bg-brightyellow
+  '48;5;12' bg-brightblue
+  '48;5;13' bg-brightmagenta
+  '48;5;14' bg-brightcyan
+  '48;5;15' bg-brightwhite
+)
+() {
+  local -i i
+  local fg bg
+  for (( i = 0; i < 15; i++ )); do
+    fg="38;5;$i"
+    color[$color[$fg]]=$fg
+    fg="48;5;$i"
+    color[$color[$bg]]=$bg
+  done
+}
+print "typeset -gA color=( ${(kv@qqqq)color:#} )"
+
+local -T LS_COLORS="$1" ls_colors
+
+local MATCH MBEGIN MEND
+LS_COLORS="${LS_COLORS//(#m)(???~;5;)<30-37>/$MATCH[1,3]38;5;$MATCH[-1]}"
+LS_COLORS="${LS_COLORS//(#m)(???~;5;)<40-47>/$MATCH[1,3]48;5;$MATCH[-1]}"
+LS_COLORS="${LS_COLORS//(#m)(???~;5;)<90-97>/$MATCH[1,3]38;5;$((MATCH[-1] + 8))}"
+LS_COLORS="${LS_COLORS//(#m)(???~;5;)<100-107>/$MATCH[1,3]48;5;$((MATCH[-1] + 8))}"
+
+local -A ls_defaults=(
+  'no' "$color[none]"
+  'fi' "$color[white]"
+  'mi' "$color[brightblack]"
+  'or' "$color[red];$color[italic]"
+  'ex' "$color[brightgreen];$color[bold]"
+  'sg' "$color[brightyellow];$color[bold]"
+  'su' "$color[brightred];$color[bold]"
+  'st' "$color[blue]"
+  'di' "$color[brightblue]"
+  'tw' "$color[green]"
+  'ow' "$color[brightgreen]"
+  'ln' "$color[cyan]"
+  'so' "$color[magenta]"
+  'pi' "$color[yellow]"
+  'cd' "$color[brightyellow]"
+  'bd' "$color[brightyellow];$color[italic]"
+  '*.DS_Store' "$color[faint]"
+  '*.zwc' "$color[faint]"
+)
+ls_colors=( "${(@)ls_colors[@]:/ln=target}" )
+() {
+  local k v; for k v in ${(kv@)ls_defaults}; do
+    (( $ls_colors[(I)$k=*] > 0 )) || ls_colors+=( "$k=$v" )
+  done
+}
+
+print "export -T LS_COLORS=${(qqqq)LS_COLORS} ls_colors"
+
+local -A syntax_colors=(
+  default                 'no'
+  single-quoted-argument  'no'
+  double-quoted-argument  'no'
+  dollar-quoted-argument  'no'
+
+  path_pathseparator        'tc'
+  path_prefix_pathseparator 'tc'
+
+  comment       'mi'
+  unknown-token 'or'
+
+  arg0                  'ex'
+  builtins              'ex'
+  single-hyphen-option  'sg'
+  double-hyphen-option  'sg'
+  precommand            'su'
+  reserved-word         'su'
+
+  path_prefix   'st'
+  path          'di'
+  globbing      'tw'
+  autodirectory 'ow'
+  suffix-alias  'sa'
+
+  global-alias                  'ln'
+  rc-quote                      'ln'
+  dollar-double-quoted-argument 'ln'
+  assign                        'ln'
+  back-double-quoted-argument   'ln'
+  back-dollar-quoted-argument   'ln'
+  history-expansion             'ln'
+
+  back-quoted-argument-delimiter  'so'
+  command-substitution-delimiter  'so'
+  process-substitution-delimiter  'so'
+  back-quoted-argument  'no'
+  command-substitution  'no'
+  process-substitution  'no'
+
+  redirection       'pi'
+  commandseparator  'pi'
+  numeric-fd  'cd'
+  named-fd    'bd'
+)
+local -A ZSH_HIGHLIGHT_STYLES=()
+
+.lscolor() {
+  print -r - ${ls_colors[(R)$1=*]#$1=}
+}
+
+() {
+  local -aU spec
+  local -i num
+  local syn col em bg fg tmp
+  for syn col in ${(kv@)syntax_colors}; do
+    spec=() em=0 col="$(.lscolor $col)" fg='' bg='' tmp=''
+    for num in ${(s.;.)col}; do
+      case $tmp$num in
+        1)
+          spec+=( bold )
+          ;;
+        3|4)
+          spec+=( underline )
+          ;;
+        7)
+          spec+=( standout )
+          ;;
+        (38|48)(|\;5))
+          tmp+="$num;"
+          ;;
+        38\;5\;<->)
+          fg=$num
+          tmp=''
+          ;;
+        48\;5\;<->)
+          bg=$num
+          tmp=''
+          ;;
+      esac
+    done
+    spec+=( ${fg:+fg=$fg} ${bg:+bg=$bg} )
+    ZSH_HIGHLIGHT_STYLES[$syn]=${(j:,:)spec}
+  done
+}
+print "typeset -gA ZSH_HIGHLIGHT_STYLES=( ${(kv@qqqq)ZSH_HIGHLIGHT_STYLES} )"
+
+local -T ZLS_COLORS zls_colors=(
+  "(*directories)ma=$(.lscolor di);$color[reverse]"
+  "(*files)ma=$(.lscolor fi);;$color[reverse]"
+  "(events)=[[:space:]]#(|-)<->(#b)(*)=$(.lscolor no)=$color[faint]"
+  "(history-lines)=(#b)([[:space:]]#<->)*=$(.lscolor no)=$color[faint]"
+)
+local -A comp_colors=(
+  'reserved-words'  "$syntax_colors[reserved-word]"
+  '*suffix-aliases' "$syntax_colors[suffix-alias]"
+  '*global-aliases' "$syntax_colors[global-alias]"
+  'aliases'     "$syntax_colors[arg0]"
+  'builtins'    "$syntax_colors[arg0]"
+  'executables' "$syntax_colors[arg0]"
+  'functions'   "$syntax_colors[arg0]"
+  'commands'   "$syntax_colors[arg0]"
+  'reserved-words'  "$syntax_colors[precommand]"
+  'globflags' "$syntax_colors[globbing]"
+  'globquals' "$syntax_colors[globbing]"
+  'modifiers' "$syntax_colors[history-expansion]"
+  'options' "$syntax_colors[single-hyphen-option]"
+  'parameters'  "$syntax_colors[dollar-double-quoted-argument]"
+  'file-descriptors'  "$syntax_colors[numeric-fd]"
+
+  '(*-local|local-*~*directories)'  "ln"
+  '(*-remote|remote-*)'             "so"
+  'commit(|-object)s'               "pi"
+  '*tags'                           "cd"
+)
+() {
+  local comp col
+  for comp col in ${(kv@)comp_colors}; do
+    col=$(.lscolor $col)
+    zls_colors+=(
+      "($comp)ma=$col;$color[reverse]"
+      "($comp)=[^[:space:]]#(#b)(*)=$col=$color[none];$color[faint]"
+    )
+  done
+}
+zls_colors+=(
+  "(*~*(directories|files|expansions))=[^[:space:]]#(#b)(*)=$color[none]=$color[faint]"
+  "$ls_colors[@]"
+  "sp=$(.lscolor no)"
+  "tc=$(.lscolor no)"
+  "sa=$(.lscolor ow)"
+  "ma=$color[reverse]"
+)
+
+print-style() {
+  zstyle "$@"
+  zstyle -L $1 $2
+}
+print-style ':completion:*:default' list-colors "$zls_colors[@]"
+print-style ':completion:*' group-name ''
+print-style ':completion:*' list-separator ' '
+unfunction print-style
+
+local -A git_colors=(
+  color.branch.current        "$(.lscolor ln);$color[reverse]"
+  color.branch.plain          "$(.lscolor ln)"
+  color.branch.local          "$(.lscolor ln)"
+  color.branch.remote         "$(.lscolor so)"
+  color.branch.upstream       "$(.lscolor so)"
+
+  color.decorate.HEAD         "$(.lscolor ln)"
+  color.decorate.branch       "$(.lscolor ln)"
+  color.decorate.remoteBranch "$(.lscolor so)"
+  color.decorate.tag          "$(.lscolor cd)"
+  color.decorate.stash        "$(.lscolor mi)"
+  color.decorate.grafted      "$(.lscolor or)"
+
+  color.diff.commit     "$(.lscolor pi)"
+  # color.diff.context
+  # color.diff.frag
+  color.diff.func       "$(.lscolor ex)"
+  color.grep.function   "$(.lscolor ex)"
+  # color.diff.meta
+  # color.diff.new
+  # color.diff.newMoved
+  # color.diff.old
+  # color.diff.oldMoved
+  color.diff.whitespace "$(.lscolor no)"
+
+  # color.grep.context
+  color.grep.filename   "$(.lscolor fi)"
+  color.grep.column     "$(.lscolor mi)"
+  color.grep.lineNumber "$(.lscolor mi)"
+  # color.grep.match
+  # color.grep.selected
+  # color.grep.separator
+
+  color.interactive.header  "$(.lscolor no)"
+  color.interactive.error   "$(.lscolor or)"
+  color.interactive.help    "$(.lscolor mi)"
+  # color.interactive.prompt
+
+  color.remote.success  "$(.lscolor ex)"
+  color.remote.warning  "$(.lscolor sg)"
+  color.remote.error    "$(.lscolor su)"
+  color.remote.hint     "$(.lscolor mi)"
+
+  color.status.header       "$(.lscolor no)"
+  color.status.branch       "$(.lscolor ln)"
+  color.status.localBranch  "$(.lscolor ln)"
+  color.status.remoteBranch "$(.lscolor so)"
+  color.status.added        "$(.lscolor ex)"
+  color.status.updated      "$(.lscolor ex)"
+  color.status.changed      "$(.lscolor sg)"
+  color.status.unmerged     "$(.lscolor su)"
+  color.status.nobranch     "$(.lscolor or)"
+  color.status.untracked    "$(.lscolor mi)"
+)
+
+unfunction .lscolor
+
+() {
+  local -a spec
+  local -i num
+  local slot col fg bg tmp
+  for slot col in ${(kv@)git_colors}; do
+    spec=() fg='' bg='' tmp=''
+    for num in ${(s.;.)col}; do
+      case $tmp$num in
+        1)
+          spec+=( bold )
+          ;;
+        2)
+          spec+=( dim )
+          ;;
+        3)
+          spec+=( italic )
+          ;;
+        4)
+          spec+=( ul )
+          ;;
+        5)
+          spec+=( blink )
+          ;;
+        7)
+          spec+=( reverse )
+          ;;
+        9)
+          spec+=( strike )
+          ;;
+        (38|48)(|\;5))
+          tmp+="$num;"
+          ;;
+        38\;5\;<0-15>)
+          fg=$color[$tmp$num]
+          tmp=''
+          ;;
+        48\;5\;<0-15>)
+          bg=${color[$tmp$num]#bg-}
+          tmp=''
+          ;;
+      esac
+    done
+    if [[ -n $fg || -n $bg ]]; then
+      spec=( ${fg:-normal} ${bg:-normal} $spec[@] )
+      git config --global $slot "$spec"
+    else
+      git config --global --unset $slot
+    fi
+  done
+}

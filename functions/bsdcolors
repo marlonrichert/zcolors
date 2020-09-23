@@ -1,0 +1,65 @@
+#!/bin/zsh
+# Converts GNU `$LS_COLORS` to BSD `$LSCOLORS`.
+
+local -A num_to_bsd=(
+  0 a
+  1 b
+  2 c
+  3 d
+  4 e
+  5 f
+  6 g
+  7 h
+)
+export LSCOLORS=''  # The BSD version does not have an underscore.
+local gnu num fg bg bold reverse iso
+local -i num
+for gnu in 'di' 'ln' 'so' 'pi' 'ex' 'bd' 'cd' 'su' 'sg' 'tw' 'ow'; do
+  fg=x bg=x bold=no reverse=no iso=''
+  for num in ${(s:;:)ls_colors[$gnu]}; do
+    case $iso$num in
+      '')
+        ;;
+      2)
+        bold=yes ;;
+      3|4|7)
+        reverse=yes ;;
+      38)
+        iso='fg' ;;
+      48)
+        iso='bg' ;;
+      [fb]g5)
+        iso+='=' ;;
+      [fb]g=<0-7>)
+        iso+=$num ;|
+      [fb]g=<8-15>)
+        bold=yes
+        iso+=$(( num - 8 ))
+        ;|
+      [fb]g=*)
+        eval "$iso"
+        iso=''
+        ;;
+      3?)
+        fg=$num_to_bsd[$(( num - 30 ))] ;;
+      9?)
+        fg=$num_to_bsd[$(( num - 90 ))]
+        bold=yes
+        ;;
+      4?)
+        bg=$num_to_bsd[$(( num - 40 ))] ;;
+      10?)
+        bg=$num_to_bsd[$(( num - 100 ))]
+        bold=yes
+        ;;
+    esac
+  done
+  [[ $bold == yes && fg != x ]] &&
+    fg=$fg:u
+  case $reverse in
+    no)
+      LSCOLORS+=$fg$bg ;;
+    yes)
+      LSCOLORS+=${${bg:#x}:-a}$fg ;;
+  esac
+done

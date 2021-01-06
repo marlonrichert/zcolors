@@ -9,13 +9,9 @@ Use your `$LS_COLORS` to generate a coherent theme for Git and your Zsh prompt, 
 
 ## Installation
 Using [Znap](https://github.com/marlonrichert/zsh-snap) **(recommended)**:
-1.  On the command line, do:
-    ```zsh
-    % znap clone marlonrichert/zsh-snap
-    ```
 1.  In your `~/.zshrc` file, add:
     ```zsh
-    znap source zcolors
+    znap source marlonrichert/zcolors
     znap eval zcolors "zcolors ${(q)LS_COLORS}"
     ```
 1.  To update, do:
@@ -27,7 +23,7 @@ Manually:
 1.  On the command line, do:
     ```zsh
     % cd ~/.zsh  # or wherever you keep your plugins
-    % git clone https://github.com/marlonrichert/zsh-snap.git
+    % git clone https://github.com/marlonrichert/zcolors.git
     % autoload -Uz ~/.zsh/zcolors/functions/zcolors
     % zcolors $LS_COLORS >! ~/.zsh/zcolors.zsh
     ```
@@ -48,25 +44,25 @@ Manually:
 
 ## Usage
 Once you've installed Zsh Theme Kit with the steps above, then your `$LS_COLORS` are automatically
-used for your Zsh completions and [command line syntax
-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting). No other steps are required
-for these.
+used for your Zsh completions. No other steps are required for this.
+
+### Prompt
+Zsh Theme Kit provides an `lscolor` function that can retrieves the values of `di`, `ln`, `so`,
+`pi`, `ex`, `bd`, `cd`, `su`, `sg`, `tw` and `ow`. You can use it in your prompt as follows:
+```zsh
+# di: dir color
+# %~: present working dir
+# %b: reset colors
+PS1="$(lscolor di)%~%b
+> "=
+```
+
+## Command Line
+For your `$LS_COLORS` to be used in your command line, you will need to also install
+[`zsh-syntax-highlighting`](https://github.com/zsh-users/zsh-syntax-highlighting).
 
 ### Git
 Your `$LS_COLORS` are used automatically in Git, too. **_However,_** Git supports only the 16 basic
 terminal colors. If any of `di`, `ln`, `so`, `pi`, `ex`, `bd`, `cd`, `su`, `sg`, `tw` or `ow` use
 higher order colors, you will need to replace these.
 
-### Prompt
-Zsh Theme Kit provides an `lscolor` function that can retrieves the values of `di`, `ln`, `so`,
-`pi`, `ex`, `bd`, `cd`, `su`, `sg`, `tw` and `ow`. You can use it in your prompt as follows:
-```zsh
-# Enable prompt substitutions.
-setopt promptsubst
-
-# di: dir color
-# %~: present working dir
-# %b: reset colors
-PS1='$(lscolor di)%~%b
-> '
-```

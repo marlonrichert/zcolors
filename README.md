@@ -4,6 +4,9 @@ command line.
 
 * [Installation](#installation)
 * [Usage](#usage)
+    * [Prompt](#prompt)
+    * [Command Line](#command-line)
+    * [Git](#git)
 
 ![screen shot](screenshot.png)
 
@@ -22,24 +25,24 @@ Using [Znap](https://github.com/marlonrichert/zsh-snap) **(recommended)**:
 Manually:
 1.  On the command line, do:
     ```zsh
-    % cd ~/.zsh  # or wherever you keep your plugins
+    % cd ~/zsh  # or wherever you keep your plugins
     % git clone https://github.com/marlonrichert/zcolors.git
     % autoload -Uz ~/.zsh/zcolors/functions/zcolors
     % zcolors $LS_COLORS >! ~/.zsh/zcolors.zsh
     ```
 1.  In your `~/.zshrc` file, add:
     ```zsh
-    source ~/.zsh/zcolors/zcolors.plugin.zsh
-    source ~/.zsh/zcolors.zsh  # generated in step 1
+    source ~/zsh/zcolors/zcolors.plugin.zsh
+    source ~/zsh/zcolors.zsh  # generated in step 1
     ```
 1.  To update, do:
     ```zsh
-    % cd ~/.zsh/zcolors
+    % cd ~/zsh/zcolors
     % git pull
     ```
 1.  Whenever you change your `$LS_COLORS`, do:
     ```zsh
-    % zcolors $LS_COLORS >! ~/.zsh/zcolors.zsh
+    % zcolors $LS_COLORS >! ~/zsh/zcolors.zsh
     ```
 
 ## Usage
@@ -47,10 +50,11 @@ Once you've installed Z Colors with the steps above, then your `$LS_COLORS` are 
 for your Zsh completions. No other steps are required for this.
 
 ### Prompt
-Z Colors provides an `lscolor` function that can retrieves the values of `di`, `ln`, `so`, `pi`,
-`ex`, `bd`, `cd`, `su`, `sg`, `tw` and `ow`. You can use it in your prompt as follows:
+Z Colors provides a function `lscolor` that can output the colors of `di`, `ln`, `so`, `pi`, `ex`,
+`bd`, `cd`, `su`, `sg`, `tw` and `ow`. You can use it in your prompt as follows:
 ```zsh
 # di: dir color
+# %{...%}: zero-width output
 # %~: present working dir
 # %f: reset foreground color
 # %k: reset background color
@@ -59,7 +63,7 @@ PS1="%{$(lscolor di)}%~%f%k%b
 > "
 ```
 
-## Command Line
+### Command Line
 For your `$LS_COLORS` to be used in your command line, you will need to also install
 [`zsh-syntax-highlighting`](https://github.com/zsh-users/zsh-syntax-highlighting).
 

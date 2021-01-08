@@ -52,9 +52,11 @@ Zsh Theme Kit provides an `lscolor` function that can retrieves the values of `d
 ```zsh
 # di: dir color
 # %~: present working dir
-# %b: reset colors
-PS1="$(lscolor di)%~%b
-> "=
+# %f: reset foreground color
+# %k: reset background color
+# %b: reset other formatting
+PS1="%{$(lscolor di)}%~%f%k%b
+> "
 ```
 
 ## Command Line

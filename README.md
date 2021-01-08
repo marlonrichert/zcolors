@@ -1,6 +1,6 @@
 # 🌈 Z Colors
 Use your `$LS_COLORS` to generate a coherent theme for Git and your Zsh prompt, completions and
-[command line syntax highlighting](https://github.com/zsh-users/zsh-syntax-highlighting).
+command line.
 
 * [Installation](#installation)
 * [Usage](#usage)
@@ -43,12 +43,12 @@ Manually:
     ```
 
 ## Usage
-Once you've installed Zsh Theme Kit with the steps above, then your `$LS_COLORS` are automatically
-used for your Zsh completions. No other steps are required for this.
+Once you've installed Z Colors with the steps above, then your `$LS_COLORS` are automatically used
+for your Zsh completions. No other steps are required for this.
 
 ### Prompt
-Zsh Theme Kit provides an `lscolor` function that can retrieves the values of `di`, `ln`, `so`,
-`pi`, `ex`, `bd`, `cd`, `su`, `sg`, `tw` and `ow`. You can use it in your prompt as follows:
+Z Colors provides an `lscolor` function that can retrieves the values of `di`, `ln`, `so`, `pi`,
+`ex`, `bd`, `cd`, `su`, `sg`, `tw` and `ow`. You can use it in your prompt as follows:
 ```zsh
 # di: dir color
 # %~: present working dir

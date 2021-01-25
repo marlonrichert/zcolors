@@ -52,7 +52,7 @@ color+=(
 }
 print "typeset -gA color=( ${(kv@qqqq)color:#} )"
 
-local -T LS_COLORS="$1" ls_colors
+local -TU LS_COLORS="$1" ls_colors
 
 local MATCH MBEGIN MEND
 LS_COLORS="${LS_COLORS//(#m)(???~;5;)<30-37>/$MATCH[1,3]38;5;$MATCH[-1]}"
@@ -87,7 +87,7 @@ ls_colors=( "${(@)ls_colors[@]:/ln=target}" )
   done
 }
 
-print "export -T LS_COLORS=${(qqqq)LS_COLORS} ls_colors"
+print "export -TU LS_COLORS=${(qqqq)LS_COLORS} ls_colors"
 
 local -A syntax_colors=(
   default                 'no'
@@ -250,7 +250,6 @@ local -A git_colors=(
   # color.diff.context
   # color.diff.frag
   color.diff.func       "$(.lscolor ex)"
-  color.grep.function   "$(.lscolor ex)"
   # color.diff.meta
   # color.diff.new
   # color.diff.newMoved
@@ -258,9 +257,10 @@ local -A git_colors=(
   # color.diff.oldMoved
   color.diff.whitespace "$(.lscolor no)"
 
+  color.grep.column     "$(.lscolor mi)"
   # color.grep.context
   color.grep.filename   "$(.lscolor fi)"
-  color.grep.column     "$(.lscolor mi)"
+  color.grep.function   "$(.lscolor ex)"
   color.grep.lineNumber "$(.lscolor mi)"
   # color.grep.match
   # color.grep.selected

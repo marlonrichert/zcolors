@@ -61,29 +61,27 @@ ls_colors=( "${(@)ls_colors[@]:/ln=target}" )
 print -r - "export -TU LS_COLORS=${(q+)LS_COLORS} ls_colors"
 
 local -A syntax_colors=(
-  default                 'no'
-  single-quoted-argument  'no'
-  double-quoted-argument  'no'
-  dollar-quoted-argument  'no'
-
-  path_pathseparator        'tc'
-  path_prefix_pathseparator 'tc'
-
+  default       'no'
   comment       'mi'
   unknown-token 'or'
 
-  arg0                  'ex'
-  builtins              'ex'
-  single-hyphen-option  'sg'
-  double-hyphen-option  'sg'
-  precommand            'su'
-  reserved-word         'su'
+  arg0                    'ex'
+  builtins                'ex'
+  suffix-alias            'ex'
+  single-hyphen-option    'sg'
+  double-hyphen-option    'sg'
+  single-quoted-argument  'sg'
+  double-quoted-argument  'sg'
+  dollar-quoted-argument  'sg'
+  precommand              'su'
+  reserved-word           'su'
 
-  path_prefix   'st'
-  path          'di'
-  globbing      'tw'
-  autodirectory 'ow'
-  suffix-alias  'ow'
+  globbing                  'tw'
+  path_prefix               'di'
+  path_prefix_pathseparator 'st'
+  path                      'ow'
+  path_pathseparator        'tw'
+  autodirectory             'ow'
 
   global-alias                  'ln'
   rc-quote                      'ln'
@@ -100,10 +98,10 @@ local -A syntax_colors=(
   command-substitution  'no'
   process-substitution  'no'
 
-  redirection       'pi'
-  commandseparator  'pi'
-  numeric-fd  'cd'
-  named-fd    'bd'
+  redirection             'pi'
+  commandseparator        'pi'
+  numeric-fd              'cd'
+  named-fd                'bd'
 )
 local -A ZSH_HIGHLIGHT_STYLES=()
 
@@ -115,37 +113,46 @@ local -A ZSH_HIGHLIGHT_STYLES=()
   local -aU spec
   local -i num
   local syn col em bg fg tmp
-  for syn col in ${(kv@)syntax_colors}; do
+  for syn col in "${(kv@)syntax_colors}"; do
     spec=() em=0 col="$(.lscolor $col)" fg='' bg='' tmp=''
     for num in ${(s.;.)col}; do
       case $tmp$num in
-        1)
+        0 )
+          spec+=( none )
+          ;;
+        1 )
           spec+=( bold )
           ;;
-        3|4)
+        <3-4> )
           spec+=( underline )
           ;;
-        7)
+        7 )
           spec+=( standout )
           ;;
-        (38|48)(|\;5))
+        39 )
+          fg=default
+          ;;
+        49 )
+          bg=default
+          ;;
+        (38|48)(|\;5) )
           tmp+="$num;"
           ;;
-        38\;5\;<->)
+        38\;5\;<-> )
           fg=$num
           tmp=''
           ;;
-        48\;5\;<->)
+        48\;5\;<-> )
           bg=$num
           tmp=''
           ;;
       esac
     done
     spec+=( ${fg:+fg=$fg} ${bg:+bg=$bg} )
-    ZSH_HIGHLIGHT_STYLES[$syn]=${(j:,:)spec}
+    ZSH_HIGHLIGHT_STYLES[$syn]="${(j:,:)spec}"
   done
 }
-print "typeset -gA ZSH_HIGHLIGHT_STYLES=( ${(kv@qqqq)ZSH_HIGHLIGHT_STYLES} )"
+print -r - "typeset -gA ZSH_HIGHLIGHT_STYLES=( ${(kv@q+)ZSH_HIGHLIGHT_STYLES} )"
 
 local -T ZLS_COLORS zls_colors=(
   "(*directories)ma=$(.lscolor di);$color[reverse]"

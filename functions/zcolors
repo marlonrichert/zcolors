@@ -102,6 +102,13 @@ local -A syntax_colors=(
   commandseparator        'pi'
   numeric-fd              'cd'
   named-fd                'bd'
+
+  bracket-error           'or'
+  bracket-level-1         'so'
+  bracket-level-2         'so'
+  bracket-level-3         'so'
+  bracket-level-4         'so'
+  bracket-level-5         'so'
 )
 local -A ZSH_HIGHLIGHT_STYLES=()
 
@@ -152,6 +159,7 @@ local -A ZSH_HIGHLIGHT_STYLES=()
     ZSH_HIGHLIGHT_STYLES[$syn]="${(j:,:)spec}"
   done
 }
+ZSH_HIGHLIGHT_STYLES[cursor-matchingbracket]=standout
 print -r - "typeset -gA ZSH_HIGHLIGHT_STYLES=( ${(kv@q+)ZSH_HIGHLIGHT_STYLES} )"
 
 local -T ZLS_COLORS zls_colors=(

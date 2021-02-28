@@ -155,32 +155,26 @@ local -A ZSH_HIGHLIGHT_STYLES=()
 print -r - "typeset -gA ZSH_HIGHLIGHT_STYLES=( ${(kv@q+)ZSH_HIGHLIGHT_STYLES} )"
 
 local -T ZLS_COLORS zls_colors=(
-  "(*directories)ma=$(.lscolor di);$color[reverse]"
-  "(*files)ma=$(.lscolor fi);;$color[reverse]"
   "(events)=[[:space:]]#(|-)<->(#b)(*)=$(.lscolor no)=$color[faint]"
   "(history-lines)=(#b)([[:space:]]#<->)*=$(.lscolor no)=$color[faint]"
 )
 local -A comp_colors=(
-  'reserved-words'  "$syntax_colors[reserved-word]"
-  '*suffix-aliases' "$syntax_colors[suffix-alias]"
-  '*global-aliases' "$syntax_colors[global-alias]"
-  'aliases'     "$syntax_colors[arg0]"
-  'builtins'    "$syntax_colors[arg0]"
-  'executables' "$syntax_colors[arg0]"
-  'functions'   "$syntax_colors[arg0]"
-  'commands'   "$syntax_colors[arg0]"
-  'reserved-words'  "$syntax_colors[precommand]"
-  'globflags' "$syntax_colors[globbing]"
-  'globquals' "$syntax_colors[globbing]"
-  'modifiers' "$syntax_colors[history-expansion]"
-  'options' "$syntax_colors[single-hyphen-option]"
-  'parameters'  "$syntax_colors[dollar-double-quoted-argument]"
   'file-descriptors'  "$syntax_colors[numeric-fd]"
 
-  '(*-local|local-*~*directories)'  "ln"
-  '(*-remote|remote-*)'             "so"
-  'commit(|-object)s'               "pi"
-  '*tags'                           "cd"
+  '(aliases|builtins|executables|functions|commands)' 'ex'
+  'suffix-aliases'  'ex'
+  'options'         'sg'
+  'reserved-words'  'su'
+
+  'glob(flags|quals)' 'di'
+
+  '(global-aliases|modifiers|parameters)' 'ln'
+
+  '*local*~*director*'        'ln'
+  '*(branch|head)*~*remote*'  'ln'
+  '*remote*~*(branch|head)*'  'so'
+  '*commit*~*-tag'            'pi'
+  '*-tag*~*commit*'           'cd'
 )
 () {
   local comp col

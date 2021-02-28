@@ -181,18 +181,17 @@ local -A comp_colors=(
   for comp col in ${(kv@)comp_colors}; do
     col=$(.lscolor $col)
     zls_colors+=(
-      "($comp)ma=$col;$color[reverse]"
-      "($comp)=[^[:space:]]#(#b)(*)=$col=$color[none];$color[faint]"
+      "($comp)=(*~(*  *))(#b)((  *)|)=$col=$color[none];$color[faint]"
     )
   done
 }
 zls_colors+=(
-  "(*~*(directories|files|expansions))=[^[:space:]]#(#b)(*)=$color[none]=$color[faint]"
+  "(*~*(directories|files|expansions))=(*~(*  *))(#b)((  *)|)=$color[none]=$color[faint]"
   "$ls_colors[@]"
-  "sp=$(.lscolor no)"
-  "tc=$(.lscolor no)"
-  "sa=$(.lscolor ow)"
-  "ma=$color[reverse]"
+  "sp=$(.lscolor fi)"
+  "tc=$(.lscolor fi)"
+  "sa=$(.lscolor ex)"
+  "ma=$color[brightwhite];$color[bg-brightblue]"
 )
 
 print-style() {

@@ -40,10 +40,10 @@ local -A ls_defaults=(
   'su' "$color[brightred]"
   'st' "$color[blue]"
   'di' "$color[brightblue]"
-  'tw' "$color[green]"
-  'ow' "$color[brightgreen]"
-  'ln' "$color[cyan]"
-  'so' "$color[magenta]"
+  'tw' "$color[blue];$color[underline]"
+  'ow' "$color[brightblue];$color[underline]"
+  'ln' "$color[brightcyan]"
+  'so' "$color[brightmagenta]"
   'pi' "$color[yellow]"
   'cd' "$color[yellow];$color[bold]"
   'bd' "$color[yellow];$color[italic]"
@@ -53,11 +53,12 @@ local -A ls_defaults=(
 ls_colors=( "${(@)ls_colors[@]:/ln=target}" )
 () {
   local k v; for k v in ${(kv@)ls_defaults}; do
-    (( $ls_colors[(I)$k=*] > 0 )) || ls_colors+=( "$k=$v" )
+    [[ -z $ls_colors[(r)$k=*] ]] &&
+      ls_colors+=( "$k=$v" )
   done
 }
 
-print "export -TU LS_COLORS=${(qqqq)LS_COLORS} ls_colors"
+print -r - "export -TU LS_COLORS=${(q+)LS_COLORS} ls_colors"
 
 local -A syntax_colors=(
   default                 'no'

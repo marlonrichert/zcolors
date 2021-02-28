@@ -5,52 +5,22 @@ if [[ ! -v color ]]; then
   autoload -Uz colors
   colors
 fi
-color+=(
-  italic $color[standout]
-  '38;5;0' black
-  '38;5;1' red
-  '38;5;2' green
-  '38;5;3' yellow
-  '38;5;4' blue
-  '38;5;5' magenta
-  '38;5;6' cyan
-  '38;5;7' white
-  '38;5;8' brightblack
-  '38;5;9' brightred
-  '38;5;10' brightgreen
-  '38;5;11' brightyellow
-  '38;5;12' brightblue
-  '38;5;13' brightmagenta
-  '38;5;14' brightcyan
-  '38;5;15' brightwhite
-  '48;5;0' bg-black
-  '48;5;1' bg-red
-  '48;5;2' bg-green
-  '48;5;3' bg-yellow
-  '48;5;4' bg-blue
-  '48;5;5' bg-magenta
-  '48;5;6' bg-cyan
-  '48;5;7' bg-white
-  '48;5;8' bg-brightblack
-  '48;5;9' bg-brightred
-  '48;5;10' bg-brightgreen
-  '48;5;11' bg-brightyellow
-  '48;5;12' bg-brightblue
-  '48;5;13' bg-brightmagenta
-  '48;5;14' bg-brightcyan
-  '48;5;15' bg-brightwhite
-)
 () {
-  local -i i
-  local fg bg
-  for (( i = 0; i < 15; i++ )); do
-    fg="38;5;$i"
-    color[$color[$fg]]=$fg
-    fg="48;5;$i"
-    color[$color[$bg]]=$bg
+  local -i i num
+  local name code
+  for (( i = 0; i < 8; i++ )); do
+    name=$color[$(( i + 30 ))]
+    for num name in $i "$name" $(( i + 8 )) "bright$name"; do
+      for code name in "38;5;$num" "$name" "48;5;$num" "bg-$name"; do
+        color[$code]="$name"
+        color[$name]="$code"
   done
+    done
+  done
+  color[03]=italic
+  color[italic]=03
 }
-print "typeset -gA color=( ${(kv@qqqq)color:#} )"
+print -r - "typeset -gA color=( ${(kv@q+)color:#} )"
 
 local -TU LS_COLORS="$1" ls_colors
 

@@ -205,15 +205,15 @@ print-style ':completion:*' list-separator ' '
 unfunction print-style
 
 local -A git_colors=(
-  color.branch.current        "$(.lscolor ln);$color[reverse]"
+  color.branch.current        "$(.lscolor ln);$color[bg-blue]"
   color.branch.plain          "$(.lscolor ln)"
   color.branch.local          "$(.lscolor ln)"
   color.branch.remote         "$(.lscolor so)"
   color.branch.upstream       "$(.lscolor so)"
 
-  color.decorate.HEAD         "$(.lscolor ln)"
+  color.decorate.HEAD         "$(.lscolor ln);$color[italic]"
   color.decorate.branch       "$(.lscolor ln)"
-  color.decorate.remoteBranch "$(.lscolor so)"
+  color.decorate.remotebranch "$(.lscolor so)"
   color.decorate.tag          "$(.lscolor cd)"
   color.decorate.stash        "$(.lscolor mi)"
   color.decorate.grafted      "$(.lscolor or)"
@@ -233,7 +233,7 @@ local -A git_colors=(
   # color.grep.context
   color.grep.filename   "$(.lscolor fi)"
   color.grep.function   "$(.lscolor ex)"
-  color.grep.lineNumber "$(.lscolor mi)"
+  color.grep.linenumber "$(.lscolor mi)"
   # color.grep.match
   # color.grep.selected
   # color.grep.separator
@@ -250,14 +250,14 @@ local -A git_colors=(
 
   color.status.header       "$(.lscolor no)"
   color.status.branch       "$(.lscolor ln)"
-  color.status.localBranch  "$(.lscolor ln)"
-  color.status.remoteBranch "$(.lscolor so)"
-  color.status.added        "$(.lscolor ex)"
-  color.status.updated      "$(.lscolor ex)"
-  color.status.changed      "$(.lscolor sg)"
-  color.status.unmerged     "$(.lscolor su)"
+  color.status.localbranch  "$(.lscolor ln)"
+  color.status.remotebranch "$(.lscolor so)"
   color.status.nobranch     "$(.lscolor or)"
-  color.status.untracked    "$(.lscolor mi)"
+  color.status.added        "$color[green]"
+  color.status.updated      "$color[green]"
+  color.status.changed      "$color[yellow]"
+  color.status.unmerged     "$color[red]"
+  color.status.untracked    "$color[dim]"
 )
 
 unfunction .lscolor
@@ -266,7 +266,7 @@ unfunction .lscolor
   local -a spec
   local -i num
   local slot col fg bg tmp
-  for slot col in ${(kv@)git_colors}; do
+  for slot col in "${(kv@)git_colors}"; do
     spec=() fg='' bg='' tmp=''
     for num in ${(s.;.)col}; do
       case $tmp$num in

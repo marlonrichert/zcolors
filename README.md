@@ -14,8 +14,7 @@ command line.
 Using [Znap](https://github.com/marlonrichert/zsh-snap) **(recommended)**:
 1.  In your `~/.zshrc` file, add:
     ```zsh
-    znap source marlonrichert/zcolors
-    znap eval zcolors "zcolors ${(q)LS_COLORS}"
+    znap eval marlonrichert/zcolors "zcolors ${(q)LS_COLORS}"
     ```
 1.  To update, do:
     ```zsh
@@ -25,24 +24,24 @@ Using [Znap](https://github.com/marlonrichert/zsh-snap) **(recommended)**:
 Manually:
 1.  On the command line, do:
     ```zsh
-    % cd ~/zsh  # or wherever you keep your plugins
+    % cd ~/git  # or wherever you keep your Git repos/Zsh plugins
     % git clone https://github.com/marlonrichert/zcolors.git
-    % autoload -Uz ~/.zsh/zcolors/functions/zcolors
-    % zcolors $LS_COLORS >! ~/.zsh/zcolors.zsh
+    % autoload -Uz ~/git/zcolors/functions/zcolors
+    % zcolors $LS_COLORS >! ~/zcolors.zsh
     ```
 1.  In your `~/.zshrc` file, add:
     ```zsh
-    source ~/zsh/zcolors/zcolors.plugin.zsh
-    source ~/zsh/zcolors.zsh  # generated in step 1
+    source ~/git/zcolors/zcolors.plugin.zsh
+    source ~/zcolors.zsh  # generated in step 1
     ```
 1.  To update, do:
     ```zsh
-    % cd ~/zsh/zcolors
+    % cd ~/git/zcolors
     % git pull
     ```
 1.  Whenever you change your `$LS_COLORS`, do:
     ```zsh
-    % zcolors $LS_COLORS >! ~/zsh/zcolors.zsh
+    % zcolors $LS_COLORS >! ~/zcolors.zsh
     ```
 
 ## Usage
@@ -56,11 +55,9 @@ Z Colors provides a function `lscolor` that can output the colors of `di`, `ln`,
 # di: dir color
 # %{...%}: zero-width output
 # %~: present working dir
-# %f: reset foreground color
-# %k: reset background color
+# %f: reset Foreground color;  %k: reset bacKground color
 # %b: reset other formatting
-PS1="%{$(lscolor di)}%~%f%k%b
-> "
+PS1="%{$(lscolor di)}%~%b%f%k> "
 ```
 
 ### Command Line
@@ -71,4 +68,3 @@ For your `$LS_COLORS` to be used in your command line, you will need to also ins
 Your `$LS_COLORS` are used automatically in Git, too. **_However,_** Git supports only the 16 basic
 terminal colors. If any of `di`, `ln`, `so`, `pi`, `ex`, `bd`, `cd`, `su`, `sg`, `tw` or `ow` use
 higher order colors, you will need to replace these.
-

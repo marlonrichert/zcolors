@@ -196,8 +196,8 @@ local -A comp_colors=(
 zls_colors+=(
   "(*~*(directories|files|expansions))=(*~(*  *))(#b)((  *)|)=$color[none]=$color[faint]"
   "$ls_colors[@]"
+  "tc=$(.lscolor no)"
   "sp=$(.lscolor fi)"
-  "tc=$(.lscolor fi)"
   "sa=$(.lscolor ex)"
   "ma=$color[brightwhite];$color[bg-brightblue]"
 )
@@ -250,10 +250,10 @@ local -A git_colors=(
   color.interactive.help    "$(.lscolor mi)"
   # color.interactive.prompt
 
-  color.remote.success  "$(.lscolor ex)"
-  color.remote.warning  "$(.lscolor sg)"
-  color.remote.error    "$(.lscolor su)"
-  color.remote.hint     "$(.lscolor mi)"
+  color.remote.success  "$color[green]"
+  color.remote.warning  "$color[yellow]"
+  color.remote.error    "$color[red]"
+  color.remote.hint     "$color[faint]"
 
   color.status.header       "$(.lscolor no)"
   color.status.branch       "$(.lscolor ln)"
@@ -264,7 +264,7 @@ local -A git_colors=(
   color.status.updated      "$color[green]"
   color.status.changed      "$color[yellow]"
   color.status.unmerged     "$color[red]"
-  color.status.untracked    "$color[dim]"
+  color.status.untracked    "$color[faint]"
 )
 
 unfunction .lscolor
@@ -311,8 +311,8 @@ unfunction .lscolor
           ;;
       esac
     done
-    if [[ -n $fg || -n $bg ]]; then
-      spec=( ${fg:-normal} ${bg:-normal} $spec[@] )
+    spec=( ${fg:-normal} ${bg:-normal} $spec[@] )
+    if (( $#spec[@] )); then
       git config --global $slot "$spec"
     else
       git config --global --unset $slot

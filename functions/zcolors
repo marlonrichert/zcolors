@@ -189,12 +189,12 @@ local -A comp_colors=(
   for comp col in ${(kv@)comp_colors}; do
     col=$(.lscolor $col)
     zls_colors+=(
-      "($comp)=(*~(*  *))(#b)((  *)|)=$col=$color[none];$color[faint]"
+      "($comp)=(*~(?*  *))(#b)((  *)|)=$col=$color[none];$color[faint]"
     )
   done
 }
 zls_colors+=(
-  "(*~*(directories|files|expansions))=(*~(*  *))(#b)((  *)|)=$color[none]=$color[faint]"
+  "(*~*(directories|files|expansions))=(*~(?*  *))(#b)((  *)|)=$color[none]=$color[faint]"
   "$ls_colors[@]"
   "tc=$(.lscolor no)"
   "sp=$(.lscolor fi)"

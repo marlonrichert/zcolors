@@ -14,7 +14,8 @@ command line.
 Using [Znap](https://github.com/marlonrichert/zsh-snap) **(recommended)**:
 1.  In your `~/.zshrc` file, add:
     ```zsh
-    znap eval marlonrichert/zcolors "zcolors ${(q)LS_COLORS}"
+    znap source marlonrichert/zcolors
+    znap eval zcolors "zcolors ${(q)LS_COLORS}"
     ```
 1.  To update, do:
     ```zsh
@@ -27,7 +28,7 @@ Manually:
     % cd ~/git  # or wherever you keep your Git repos/Zsh plugins
     % git clone https://github.com/marlonrichert/zcolors.git
     % autoload -Uz ~/git/zcolors/functions/zcolors
-    % zcolors $LS_COLORS >! ~/zcolors.zsh
+    % zcolors $LS_COLORS >| ~/zcolors.zsh
     ```
 1.  In your `~/.zshrc` file, add:
     ```zsh
@@ -41,7 +42,7 @@ Manually:
     ```
 1.  Whenever you change your `$LS_COLORS`, do:
     ```zsh
-    % zcolors $LS_COLORS >! ~/zcolors.zsh
+    % zcolors $LS_COLORS >| ~/zcolors.zsh
     ```
 
 ## Usage

@@ -2,12 +2,6 @@
 Use your `$LS_COLORS` to generate a coherent theme for Git and your Zsh prompt, completions and
 command line.
 
-* [Installation](#installation)
-* [Usage](#usage)
-    * [Prompt](#prompt)
-    * [Command Line](#command-line)
-    * [Git](#git)
-
 ![screen shot](screenshot.png)
 
 ## Installation

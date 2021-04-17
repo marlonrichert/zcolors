@@ -199,7 +199,7 @@ zls_colors+=(
   "tc=$(.lscolor no)"
   "sp=$(.lscolor fi)"
   "sa=$(.lscolor ex)"
-  "ma=$color[brightwhite];$color[bg-brightblue]"
+  "ma=$color[brightwhite];$color[bg-blue]"
 )
 
 print-style() {
@@ -212,7 +212,7 @@ print-style ':completion:*' list-separator ' '
 unfunction print-style
 
 local -A git_colors=(
-  color.branch.current        "$(.lscolor ln);$color[bg-blue]"
+  color.branch.current        "$(.lscolor ln);$color[reverse]"
   color.branch.plain          "$(.lscolor ln)"
   color.branch.local          "$(.lscolor ln)"
   color.branch.remote         "$(.lscolor so)"

@@ -2,9 +2,7 @@
 () {
   emulate -L zsh; setopt extendedglob warncreateglobal
 
-  local fdir=${${(%):-%x}:h}/functions
-  typeset -gU fpath=( $fdir $fpath )
-  autoload -Uz $fdir/*~*.zwc
+  autoload -Uz ${${(%):-%x}:h}/functions/*~*.zwc
 
   typeset -g zle_highlight=(
     isearch:fg=0,bg=11  # black on bright yellow

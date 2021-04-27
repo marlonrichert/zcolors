@@ -14,7 +14,7 @@ fi
       for code name in "38;5;$num" "$name" "48;5;$num" "bg-$name"; do
         color[$code]="$name"
         color[$name]="$code"
-  done
+      done
     done
   done
   color[03]=italic
@@ -23,12 +23,6 @@ fi
 print -r - "typeset -gA color=( ${(kv@q+)color:#} )"
 
 local -TU LS_COLORS="$1" ls_colors
-
-local MATCH MBEGIN MEND
-LS_COLORS="${LS_COLORS//(#m)(???~;5;)<30-37>/$MATCH[1,3]38;5;$MATCH[-1]}"
-LS_COLORS="${LS_COLORS//(#m)(???~;5;)<40-47>/$MATCH[1,3]48;5;$MATCH[-1]}"
-LS_COLORS="${LS_COLORS//(#m)(???~;5;)<90-97>/$MATCH[1,3]38;5;$((MATCH[-1] + 8))}"
-LS_COLORS="${LS_COLORS//(#m)(???~;5;)<100-107>/$MATCH[1,3]48;5;$((MATCH[-1] + 8))}"
 
 local -A ls_defaults=(
   'no' "$color[none]"
@@ -50,11 +44,10 @@ local -A ls_defaults=(
   '*.DS_Store' "$color[faint]"
   '*.zwc' "$color[faint]"
 )
-ls_colors=( "${(@)ls_colors[@]:/ln=target}" )
 () {
   local k v; for k v in ${(kv@)ls_defaults}; do
     [[ -z $ls_colors[(r)$k=*] ]] &&
-      ls_colors+=( "$k=$v" )
+        ls_colors+=( "$k=$v" )
   done
 }
 
@@ -94,33 +87,39 @@ local -A syntax_colors=(
   back-quoted-argument-delimiter  'so'
   command-substitution-delimiter  'so'
   process-substitution-delimiter  'so'
+
   back-quoted-argument  'no'
   command-substitution  'no'
   process-substitution  'no'
 
-  redirection             'pi'
-  commandseparator        'pi'
-  numeric-fd              'cd'
-  named-fd                'bd'
+  redirection       'pi'
+  commandseparator  'pi'
+  numeric-fd        'cd'
+  named-fd          'bd'
 
-  bracket-error           'or'
-  bracket-level-1         'so'
-  bracket-level-2         'so'
-  bracket-level-3         'so'
-  bracket-level-4         'so'
-  bracket-level-5         'so'
+  bracket-error   'or'
+  bracket-level-1 'so'
+  bracket-level-2 'so'
+  bracket-level-3 'so'
+  bracket-level-4 'so'
+  bracket-level-5 'so'
 )
 local -A ZSH_HIGHLIGHT_STYLES=()
 
 .lscolor() {
-  print -r - ${ls_colors[(R)$1=*]#$1=}
+  local col=${ls_colors[(r)$1=*]#$1=}
+  [[ $col == target ]] &&
+      col=$ls_defaults[ln]
+  print -r -- "$col"
 }
 
 () {
   local -aU spec
   local -i num
-  local syn col em bg fg tmp
+  local num syn col em bg fg tmp
   for syn col in "${(kv@)syntax_colors}"; do
+    [[ $col == target ]] &&
+        col=$ls_defaults[ln]
     spec=() em=0 col="$(.lscolor $col)" fg='' bg='' tmp=''
     for num in ${(s.;.)col}; do
       case $tmp$num in
@@ -142,16 +141,29 @@ local -A ZSH_HIGHLIGHT_STYLES=()
         49 )
           bg=default
           ;;
-        (38|48)(|\;5) )
+        <30-37> )
+          fg=$(( num - 30 ))
+          ;;
+        <40-47> )
+          bg=$(( num - 40 ))
+          ;;
+        <90-97> )
+          fg=$(( num - 90 + 8 ))
+          ;;
+        <100-107> )
+          bg=$(( num - 100 + 8 ))
+          ;;
+        (3|4)8(|\;5) )
           tmp+="$num;"
           ;;
         38\;5\;<-> )
           fg=$num
-          tmp=''
-          ;;
+          ;|
         48\;5\;<-> )
           bg=$num
-          tmp=''
+          ;|
+        (3|4)8\;5\;<-> )
+          tmp=
           ;;
       esac
     done
@@ -270,52 +282,67 @@ local -A git_colors=(
 unfunction .lscolor
 
 () {
-  local -a spec
+  local -aU spec
   local -i num
   local slot col fg bg tmp
   for slot col in "${(kv@)git_colors}"; do
+    [[ $col == target ]] &&
+        col=$ls_defaults[ln]
     spec=() fg='' bg='' tmp=''
     for num in ${(s.;.)col}; do
       case $tmp$num in
-        1)
+        1 )
           spec+=( bold )
           ;;
-        2)
+        2 )
           spec+=( dim )
           ;;
-        3)
+        3 )
           spec+=( italic )
           ;;
-        4)
+        4 )
           spec+=( ul )
           ;;
-        5)
+        5 )
           spec+=( blink )
           ;;
-        7)
+        7 )
           spec+=( reverse )
           ;;
-        9)
+        9 )
           spec+=( strike )
           ;;
-        (38|48)(|\;5))
+        <30-37> )
+          fg=$(( num - 30 ))
+          ;;
+        <40-47> )
+          bg=$(( num - 40 ))
+          ;;
+        <90-97> )
+          fg=$(( num - 90 + 8 ))
+          ;;
+        <100-107> )
+          bg=$(( num - 100 + 8 ))
+          ;;
+        (3|4)8(|\;5) )
           tmp+="$num;"
           ;;
-        38\;5\;<0-15>)
-          fg=$color[$tmp$num]
-          tmp=''
-          ;;
-        48\;5\;<0-15>)
-          bg=${color[$tmp$num]#bg-}
-          tmp=''
+        38\;5\;<-> )
+          fg=$num
+          ;|
+        48\;5\;<0-15> )
+          bg=$num
+          ;|
+        (3|4)8\;5\;<-> )
+          tmp=
           ;;
       esac
     done
-    spec=( ${fg:-normal} ${bg:-normal} $spec[@] )
+    spec=( "${fg:-normal}" "${bg:-normal}" $spec[@] )
     if (( $#spec[@] )); then
-      git config --global $slot "$spec"
+      git config --global "$slot" "$spec"
     else
-      git config --global --unset $slot
+      git config --global --unset "$slot"
     fi
   done
 }

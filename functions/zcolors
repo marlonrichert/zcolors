@@ -199,14 +199,13 @@ local -A comp_colors=(
 () {
   local comp col
   for comp col in ${(kv@)comp_colors}; do
-    col=$(.lscolor $col)
     zls_colors+=(
-      "($comp)=(*~(?*  *))(#b)((  *)|)=$col=$color[none];$color[faint]"
+        "($comp)=(#b)(*[^ ]~*  *|)[ ]#(*)=$color[none]=$( .lscolor $col )=$color[faint]"
     )
   done
 }
 zls_colors+=(
-  "(*~*(directories|files|expansions))=(*~(?*  *))(#b)((  *)|)=$color[none]=$color[faint]"
+  "(*~*(directories|files|expansions))=(*[^ ]~*  *|)[ ]#(#b)(*)=$color[none]=$color[faint]"
   "$ls_colors[@]"
   "tc=$(.lscolor no)"
   "sp=$(.lscolor fi)"

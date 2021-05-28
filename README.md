@@ -1,6 +1,5 @@
 # 🌈 Z Colors
-Use your `$LS_COLORS` to generate a coherent theme for Git and your Zsh prompt, completions and
-command line.
+Use your `$LS_COLORS` to generate a coherent theme for `git`, `less`, `grep`, and your Zsh prompt, completions and command line.
 
 ![screen shot](screenshot.png)
 
@@ -40,7 +39,7 @@ Manually:
 
 ## Usage
 Once you've installed Z Colors with the steps above, then your `$LS_COLORS` are automatically used
-in Git and for your Zsh completions. No other steps are required for this.
+in `git`, `less`, `grep` and for your Zsh completions. No other steps are required for this.
 
 ### Command Line
 For your `$LS_COLORS` to be used in your command line, you will need to also install

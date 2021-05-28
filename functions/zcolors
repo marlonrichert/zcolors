@@ -123,55 +123,55 @@ local -A ZSH_HIGHLIGHT_STYLES=()
     spec=() em=0 col="$(.lscolor $col)" fg='' bg='' tmp=''
     for num in ${(s.;.)col}; do
       case $tmp$num in
-        0 )
+        ( 0 )
           spec+=( none )
-          ;;
-        1 )
+        ;;
+        ( 1 )
           spec+=( bold )
-          ;;
-        <3-4> )
+        ;;
+        ( 4 )
           spec+=( underline )
-          ;;
-        7 )
+        ;;
+        ( 3 | 7 )
           spec+=( standout )
-          ;;
-        39 )
+        ;;
+        ( 39 )
           fg=default
-          ;;
-        49 )
+        ;;
+        ( 49 )
           bg=default
-          ;;
-        <30-37> )
+        ;;
+        ( <30-37> )
           fg=$(( num - 30 ))
-          ;;
-        <40-47> )
+        ;;
+        ( <40-47> )
           bg=$(( num - 40 ))
-          ;;
-        <90-97> )
+        ;;
+        ( <90-97> )
           fg=$(( num - 90 + 8 ))
-          ;;
-        <100-107> )
+        ;;
+        ( <100-107> )
           bg=$(( num - 100 + 8 ))
-          ;;
-        (3|4)8(|\;5) )
+        ;;
+        ( (3|4)8(|\;5) )
           tmp+="$num;"
-          ;;
-        38\;5\;<-> )
+        ;;
+        ( 38\;5\;<-> )
           fg=$num
-          ;|
-        48\;5\;<-> )
+        ;|
+        ( 48\;5\;<-> )
           bg=$num
-          ;|
-        (3|4)8\;5\;<-> )
+        ;|
+        ( (3|4)8\;5\;<-> )
           tmp=
-          ;;
+        ;;
       esac
     done
     spec+=( ${fg:+fg=$fg} ${bg:+bg=$bg} )
     ZSH_HIGHLIGHT_STYLES[$syn]="${(j:,:)spec}"
   done
 }
-ZSH_HIGHLIGHT_STYLES[cursor-matchingbracket]=standout
+ZSH_HIGHLIGHT_STYLES[cursor-matchingbracket]=fg=0,bg=11
 print -r - "typeset -gA ZSH_HIGHLIGHT_STYLES=( ${(kv@q+)ZSH_HIGHLIGHT_STYLES} )"
 
 local -T ZLS_COLORS zls_colors=(

@@ -52,6 +52,14 @@ local -A ls_defaults=(
 }
 
 print -r - "export -TU LS_COLORS=${(q+)LS_COLORS} ls_colors"
+print -r - "
+autoload -Uz add-zsh-hook
+.zcolors.precmd() {
+  zmodload -F zsh/parameter p:saliases
+  ls_colors+=( '*.'\${(@k)^saliases}'=$ls_defaults[sg]' )
+}
+add-zsh-hook precmd .zcolors.precmd
+"
 
 local -A syntax_colors=(
   default       'no'
@@ -60,7 +68,7 @@ local -A syntax_colors=(
 
   arg0                    'ex'
   builtins                'ex'
-  suffix-alias            'ex'
+  suffix-alias            'sg'
   single-hyphen-option    'sg'
   double-hyphen-option    'sg'
   single-quoted-argument  'sg'
@@ -182,7 +190,7 @@ local -A comp_colors=(
   'file-descriptors'  "$syntax_colors[numeric-fd]"
 
   '(aliases|builtins|executables|functions|commands)' 'ex'
-  'suffix-aliases'  'ex'
+  'suffix-aliases'  'sg'
   'options'         'sg'
   'reserved-words'  'su'
 

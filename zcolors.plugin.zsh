@@ -12,6 +12,5 @@
     suffix:bg=blue,fg=15    # bright white
   )
   export -TU LESS="$LESS --use-color -DSkY" less ' '
-  export -TU GREP_OPTIONS="$GREP_OPTIONS --color=auto" grep_options ' '
   export GREP_COLOR='30;103'
 }

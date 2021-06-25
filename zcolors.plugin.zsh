@@ -11,7 +11,9 @@
     region:bg=blue,fg=15    # bright white
     suffix:bg=blue,fg=15    # bright white
   )
-  # Commenting this line as it breaks `less` on MacOS
-  # export -TU LESS="$LESS --use-color -DSkY" less ' '
+  # Exporting only if not on MacOS
+  if [[ ! $(uname) == "Darwin" ]]; then
+    export -TU LESS="$LESS --use-color -DSkY" less ' '
+  fi
   export GREP_COLOR='30;103'
 }

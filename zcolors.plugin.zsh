@@ -11,6 +11,5 @@
     region:bg=blue,fg=15    # bright white
     suffix:bg=blue,fg=15    # bright white
   )
-  export -TU LESS="$LESS --use-color -DSkY" less ' '
   export GREP_COLOR='30;103'
 }

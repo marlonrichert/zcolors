@@ -1,6 +1,9 @@
 #!/bin/zsh
 emulate -L zsh; setopt extendedglob rcquotes warncreateglobal
 
+command -v less > /dev/null && (( ${${=$( less -V )}[2]} >= 581 )) &&
+    print -r - 'export -TU LESS="$LESS --use-color -DSkY" less \ '
+
 if [[ ! -v color ]]; then
   autoload -Uz colors
   colors

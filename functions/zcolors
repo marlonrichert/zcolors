@@ -243,7 +243,7 @@ local -A git_colors=(
   color.decorate.HEAD         "$(.lscolor ln);$color[italic]"
   color.decorate.branch       "$(.lscolor ln)"
   color.decorate.remotebranch "$(.lscolor so)"
-  color.decorate.tag          "$(.lscolor cd)"
+  color.decorate.tag          "$(.lscolor pi)"
   color.decorate.stash        "$(.lscolor mi)"
   color.decorate.grafted      "$(.lscolor or)"
 
@@ -282,10 +282,10 @@ local -A git_colors=(
   color.status.localbranch  "$(.lscolor ln)"
   color.status.remotebranch "$(.lscolor so)"
   color.status.nobranch     "$(.lscolor or)"
-  color.status.added        "$color[green]"
-  color.status.updated      "$color[green]"
-  color.status.changed      "$color[yellow]"
-  color.status.unmerged     "$color[red]"
+  color.status.added        "$color[brightgreen]"
+  color.status.updated      "$color[brightgreen]"
+  color.status.changed      "$color[brightyellow]"
+  color.status.unmerged     "$color[brightred]"
   color.status.untracked    "$color[faint]"
 )
 

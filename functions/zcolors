@@ -127,7 +127,7 @@ local -A ZSH_HIGHLIGHT_STYLES=()
 () {
   local -aU spec
   local -i num
-  local num syn col em bg fg tmp
+  local syn col em bg fg tmp
   for syn col in "${(kv@)syntax_colors}"; do
     [[ $col == target ]] &&
         col=$ls_defaults[ln]
@@ -226,9 +226,12 @@ zls_colors+=(
 
 print-style() {
   zstyle "$@"
+  [[ $1 == -e ]] &&
+      shift
   zstyle -L $1 $2
 }
-print-style ':completion:*:default' list-colors "$zls_colors[@]"
+print -r - "typeset -gTU ZLS_COLORS=${(q+)ZLS_COLORS} zls_colors"
+print-style -e ':completion:*:default' list-colors 'reply=( $zls_colors[@] )'
 print-style ':completion:*' group-name ''
 print-style ':completion:*' list-separator ' '
 unfunction print-style

@@ -237,62 +237,73 @@ print-style ':completion:*' list-separator ' '
 unfunction print-style
 
 local -A git_colors=(
-  color.branch.current        "$(.lscolor ln);$color[reverse]"
-  color.branch.plain          "$(.lscolor ln)"
-  color.branch.local          "$(.lscolor ln)"
-  color.branch.remote         "$(.lscolor so)"
-  color.branch.upstream       "$(.lscolor so)"
+  branch.current        "$(.lscolor ln);$color[reverse]"
+  branch.local          "$(.lscolor ln)"
+  branch.plain          "$(.lscolor ln)"
+  branch.remote         "$(.lscolor so)"
+  branch.upstream       "$(.lscolor so)"
 
-  color.decorate.HEAD         "$(.lscolor ln);$color[italic]"
-  color.decorate.branch       "$(.lscolor ln)"
-  color.decorate.remotebranch "$(.lscolor so)"
-  color.decorate.tag          "$(.lscolor pi)"
-  color.decorate.stash        "$(.lscolor mi)"
-  color.decorate.grafted      "$(.lscolor or)"
+  decorate.HEAD         "$(.lscolor ln);$color[italic]"
+  decorate.branch       "$(.lscolor ln)"
+  decorate.remotebranch "$(.lscolor so)"
+  decorate.tag          "$(.lscolor pi)"
+  decorate.grafted      "$(.lscolor or)"
+  decorate.stash        "$(.lscolor mi)"
 
-  color.diff.commit     "$(.lscolor pi)"
-  # color.diff.context
-  # color.diff.frag
-  color.diff.func       "$(.lscolor ex)"
-  # color.diff.meta
-  # color.diff.new
-  # color.diff.newMoved
-  # color.diff.old
-  # color.diff.oldMoved
-  color.diff.whitespace "$(.lscolor no)"
+  diff.commit      "$(.lscolor pi)"
+  diff.meta        "$(.lscolor pi)"
+  diff.frag        "$(.lscolor pi);$color[underline]"
+  diff.func        "$(.lscolor no)"
+  diff.context     "$(.lscolor no)"
+  diff.contextBold "$(.lscolor no);$color[bold]"
+  diff.new         "$color[brightgreen]"
+  diff.newDimmed   "$color[green]"
+  diff.newBold     "$color[brightgreen];$color[bold]"
+  diff.old         "$color[brightred];$color[faint]"
+  diff.oldDimmed   "$color[red];$color[faint]"
+  diff.oldBold     "$color[brightred];$color[faint];$color[bold]"
+  diff.newMoved       "$color[brightcyan]"
+  diff.newMovedDimmed "$color[cyan]"
+  diff.newMovedAlternative       "$color[brightblue]"
+  diff.newMovedAlternativeDimmed "$color[blue]"
+  diff.oldMoved       "$color[brightcyan];$color[faint]"
+  diff.oldMovedDimmed "$color[cyan];$color[faint]"
+  diff.oldMovedAlternative       "$color[brightblue];$color[faint]"
+  diff.oldMovedAlternativeDimmed "$color[blue];$color[faint]"
+  diff.whitespace  "$color[reverse]"
 
-  color.grep.column     "$(.lscolor mi)"
-  # color.grep.context
-  color.grep.filename   "$(.lscolor fi)"
-  color.grep.function   "$(.lscolor ex)"
-  color.grep.linenumber "$(.lscolor mi)"
-  # color.grep.match
-  # color.grep.selected
-  # color.grep.separator
+  # grep.column
+  # grep.context
+  # grep.filename
+  # grep.function
+  # grep.linenumber
+  # grep.matchContext
+  # grep.matchSelected
+  # grep.selected
+  # grep.separator
 
-  color.interactive.header  "$(.lscolor no)"
-  color.interactive.error   "$(.lscolor or)"
-  color.interactive.help    "$(.lscolor mi)"
-  # color.interactive.prompt
+  interactive.header  "$(.lscolor mi);$color[bold]"
+  interactive.prompt  "$color[bg-blue];$color[brightwhite]"
+  interactive.help    "$(.lscolor mi)"
+  interactive.error   "$(.lscolor or)"
 
-  color.remote.success  "$color[green]"
-  color.remote.warning  "$color[yellow]"
-  color.remote.error    "$color[red]"
-  color.remote.hint     "$color[faint]"
+  remote.error    "$color[red]"
+  remote.warning  "$color[yellow]"
+  remote.success  "$color[green]"
+  remote.hint     "$color[faint]"
 
-  color.status.header       "$(.lscolor no)"
-  color.status.branch       "$(.lscolor ln)"
-  color.status.localbranch  "$(.lscolor ln)"
-  color.status.remotebranch "$(.lscolor so)"
-  color.status.nobranch     "$(.lscolor or)"
-  color.status.added        "$color[brightgreen]"
-  color.status.updated      "$color[brightgreen]"
-  color.status.changed      "$color[brightyellow]"
-  color.status.unmerged     "$color[brightred]"
-  color.status.untracked    "$color[faint]"
+  status.header       "$(.lscolor no)"
+  status.branch       "$(.lscolor ln)"
+  status.localbranch  "$(.lscolor ln)"
+  status.remotebranch "$(.lscolor so)"
+  status.nobranch     "$(.lscolor or)"
+  status.added        "$color[brightgreen]"
+  status.updated      "$color[brightgreen]"
+  status.changed      "$color[brightyellow]"
+  status.unmerged     "$color[brightred]"
+  status.untracked    "$color[faint]"
 )
-
-unfunction .lscolor
+git config --global diff.colorMoved zebra
 
 () {
   local -aU spec
@@ -353,9 +364,11 @@ unfunction .lscolor
     done
     spec=( "${fg:-normal}" "${bg:-normal}" $spec[@] )
     if (( $#spec[@] )); then
-      git config --global "$slot" "$spec"
+      git config --global "color.$slot" "$spec"
     else
-      git config --global --unset "$slot"
+      git config --global --unset "color.$slot"
     fi
   done
 }
+
+unfunction .lscolor

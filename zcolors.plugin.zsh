@@ -12,4 +12,8 @@
     suffix:bg=blue,fg=15    # bright white
   )
   export GREP_COLOR='30;103'
+  if command -v less > /dev/null && (( ${${=$( less -V )}[2]} >= 581 )); then
+    export -TU LESS less ' '
+    less+=(  --use-color -DSkY )
+  fi
 }

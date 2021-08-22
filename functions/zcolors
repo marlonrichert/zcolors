@@ -1,9 +1,6 @@
 #!/bin/zsh
 emulate -L zsh; setopt extendedglob rcquotes warncreateglobal
 
-command -v less > /dev/null && (( ${${=$( less -V )}[2]} >= 581 )) &&
-    print -r - 'export -TU LESS="$LESS --use-color -DSkY" less \ '
-
 if [[ ! -v color ]]; then
   autoload -Uz colors
   colors
@@ -23,9 +20,9 @@ fi
   color[03]=italic
   color[italic]=03
 }
-print -r - "typeset -gA color=( ${(kv@q+)color:#} )"
+typeset -p color
 
-local -TU LS_COLORS="$1" ls_colors
+export -UT LS_COLORS ls_colors
 
 local -A ls_defaults=(
   'no' "$color[none]"
@@ -53,16 +50,16 @@ local -A ls_defaults=(
         ls_colors+=( "$k=$v" )
   done
 }
+typeset -p LS_COLORS
 
-print -r - "export -TU LS_COLORS=${(q+)LS_COLORS} ls_colors"
-print -r - "
-autoload -Uz add-zsh-hook
 .zcolors.precmd() {
+  add-zsh-hook -d precmd .zcolors.precmd
+  unfunction .zcolors.precmd
   zmodload -F zsh/parameter p:saliases
-  ls_colors+=( '*.'\${(@k)^saliases}'=$ls_defaults[sg]' )
+  ls_colors+=( '*.'${(@k)^saliases}=$ls_defaults[sg] )
 }
-add-zsh-hook precmd .zcolors.precmd
-"
+type -f .zcolors.precmd
+print 'autoload -Uz add-zsh-hook\nadd-zsh-hook precmd .zcolors.precmd'
 
 local -A syntax_colors=(
   default       'no'
@@ -115,7 +112,6 @@ local -A syntax_colors=(
   bracket-level-4 'so'
   bracket-level-5 'so'
 )
-local -A ZSH_HIGHLIGHT_STYLES=()
 
 .lscolor() {
   local col=${ls_colors[(r)$1=*]#$1=}
@@ -124,6 +120,7 @@ local -A ZSH_HIGHLIGHT_STYLES=()
   print -r -- "$col"
 }
 
+typeset -g -A ZSH_HIGHLIGHT_STYLES=()
 () {
   local -aU spec
   local -i num
@@ -183,9 +180,9 @@ local -A ZSH_HIGHLIGHT_STYLES=()
   done
 }
 ZSH_HIGHLIGHT_STYLES[cursor-matchingbracket]=fg=0,bg=11
-print -r - "typeset -gA ZSH_HIGHLIGHT_STYLES=( ${(kv@q+)ZSH_HIGHLIGHT_STYLES} )"
+typeset -p ZSH_HIGHLIGHT_STYLES
 
-local -T ZLS_COLORS zls_colors=(
+typeset -gTU ZLS_COLORS zls_colors=(
   "(events)=[[:space:]]#(|-)<->(#b)(*)=$(.lscolor no)=$color[faint]"
   "(history-lines)=(#b)([[:space:]]#<->)*=$(.lscolor no)=$color[faint]"
 )
@@ -223,6 +220,7 @@ zls_colors+=(
   "sa=$(.lscolor ex)"
   "ma=$color[brightwhite];$color[bg-blue]"
 )
+typeset -p ZLS_COLORS
 
 print-style() {
   zstyle "$@"
@@ -230,7 +228,6 @@ print-style() {
       shift
   zstyle -L $1 $2
 }
-print -r - "typeset -gTU ZLS_COLORS=${(q+)ZLS_COLORS} zls_colors"
 print-style -e ':completion:*:default' list-colors 'reply=( $zls_colors[@] )'
 print-style ':completion:*' group-name ''
 print-style ':completion:*' list-separator ' '

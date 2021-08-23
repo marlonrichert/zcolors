@@ -1,5 +1,5 @@
 #!/bin/zsh
-() {
+zcolors.plugin() {
   emulate -L zsh; setopt extendedglob warncreateglobal
 
   autoload -Uz ${${(%):-%x}:h}/functions/*~*.zwc
@@ -16,4 +16,10 @@
     export -TU LESS less ' '
     less+=(  --use-color -DSkY )
   fi
+}
+
+{
+  zcolors.plugin "$@"
+} always {
+  unfunction zcolors.plugin
 }

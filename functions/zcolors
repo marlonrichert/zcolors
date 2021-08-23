@@ -5,21 +5,20 @@ if [[ ! -v color ]]; then
   autoload -Uz colors
   colors
 fi
-() {
-  local -i i num
-  local name code
-  for (( i = 0; i < 8; i++ )); do
-    name=$color[$(( i + 30 ))]
-    for num name in $i "$name" $(( i + 8 )) "bright$name"; do
-      for code name in "38;5;$num" "$name" "48;5;$num" "bg-$name"; do
-        color[$code]="$name"
-        color[$name]="$code"
-      done
+
+local -i i= num=
+local name= code=
+for (( i = 0; i < 8; i++ )); do
+  name=$color[$(( i + 30 ))]
+  for num name in $i "$name" $(( i + 8 )) "bright$name"; do
+    for code name in "38;5;$num" "$name" "48;5;$num" "bg-$name"; do
+      color[$code]="$name"
+      color[$name]="$code"
     done
   done
-  color[03]=italic
-  color[italic]=03
-}
+done
+color[03]=italic
+color[italic]=03
 typeset -p color
 
 export -UT LS_COLORS ls_colors
@@ -44,12 +43,11 @@ local -A ls_defaults=(
   '*.DS_Store' "$color[faint]"
   '*.zwc' "$color[faint]"
 )
-() {
-  local k v; for k v in ${(kv@)ls_defaults}; do
-    [[ -z $ls_colors[(r)$k=*] ]] &&
-        ls_colors+=( "$k=$v" )
-  done
-}
+local k= v=
+for k v in ${(kv@)ls_defaults}; do
+  [[ -z $ls_colors[(r)$k=*] ]] &&
+      ls_colors+=( "$k=$v" )
+done
 typeset -p LS_COLORS
 
 .zcolors.precmd() {
@@ -121,64 +119,62 @@ local -A syntax_colors=(
 }
 
 typeset -g -A ZSH_HIGHLIGHT_STYLES=()
-() {
-  local -aU spec
-  local -i num
-  local syn col em bg fg tmp
-  for syn col in "${(kv@)syntax_colors}"; do
-    [[ $col == target ]] &&
-        col=$ls_defaults[ln]
-    spec=() em=0 col="$(.lscolor $col)" fg='' bg='' tmp=''
-    for num in ${(s.;.)col}; do
-      case $tmp$num in
-        ( 0 )
-          spec+=( none )
-        ;;
-        ( 1 )
-          spec+=( bold )
-        ;;
-        ( 4 )
-          spec+=( underline )
-        ;;
-        ( 3 | 7 )
-          spec+=( standout )
-        ;;
-        ( 39 )
-          fg=default
-        ;;
-        ( 49 )
-          bg=default
-        ;;
-        ( <30-37> )
-          fg=$(( num - 30 ))
-        ;;
-        ( <40-47> )
-          bg=$(( num - 40 ))
-        ;;
-        ( <90-97> )
-          fg=$(( num - 90 + 8 ))
-        ;;
-        ( <100-107> )
-          bg=$(( num - 100 + 8 ))
-        ;;
-        ( (3|4)8(|\;5) )
-          tmp+="$num;"
-        ;;
-        ( 38\;5\;<-> )
-          fg=$num
-        ;|
-        ( 48\;5\;<-> )
-          bg=$num
-        ;|
-        ( (3|4)8\;5\;<-> )
-          tmp=
-        ;;
-      esac
-    done
-    spec+=( ${fg:+fg=$fg} ${bg:+bg=$bg} )
-    ZSH_HIGHLIGHT_STYLES[$syn]="${(j:,:)spec}"
+local -aU spec=()
+local -i num=
+local syn= col= em= bg= fg= tmp=
+for syn col in "${(kv@)syntax_colors}"; do
+  [[ $col == target ]] &&
+      col=$ls_defaults[ln]
+  spec=() em=0 col="$(.lscolor $col)" fg='' bg='' tmp=''
+  for num in ${(s.;.)col}; do
+    case $tmp$num in
+      ( 0 )
+        spec+=( none )
+      ;;
+      ( 1 )
+        spec+=( bold )
+      ;;
+      ( 4 )
+        spec+=( underline )
+      ;;
+      ( 3 | 7 )
+        spec+=( standout )
+      ;;
+      ( 39 )
+        fg=default
+      ;;
+      ( 49 )
+        bg=default
+      ;;
+      ( <30-37> )
+        fg=$(( num - 30 ))
+      ;;
+      ( <40-47> )
+        bg=$(( num - 40 ))
+      ;;
+      ( <90-97> )
+        fg=$(( num - 90 + 8 ))
+      ;;
+      ( <100-107> )
+        bg=$(( num - 100 + 8 ))
+      ;;
+      ( (3|4)8(|\;5) )
+        tmp+="$num;"
+      ;;
+      ( 38\;5\;<-> )
+        fg=$num
+      ;|
+      ( 48\;5\;<-> )
+        bg=$num
+      ;|
+      ( (3|4)8\;5\;<-> )
+        tmp=
+      ;;
+    esac
   done
-}
+  spec+=( ${fg:+fg=$fg} ${bg:+bg=$bg} )
+  ZSH_HIGHLIGHT_STYLES[$syn]="${(j:,:)spec}"
+done
 ZSH_HIGHLIGHT_STYLES[cursor-matchingbracket]=fg=0,bg=11
 typeset -p ZSH_HIGHLIGHT_STYLES
 
@@ -204,14 +200,12 @@ local -A comp_colors=(
   '*commit*~*-tag'            'pi'
   '*-tag*~*commit*'           'cd'
 )
-() {
-  local comp col
-  for comp col in ${(kv@)comp_colors}; do
-    zls_colors+=(
-        "($comp)=(#b)(*[^ ]~*  *|)[ ]#(*)=$color[none]=$( .lscolor $col )=$color[faint]"
-    )
-  done
-}
+local comp= col=
+for comp col in ${(kv@)comp_colors}; do
+  zls_colors+=(
+      "($comp)=(#b)(*[^ ]~*  *|)[ ]#(*)=$color[none]=$( .lscolor $col )=$color[faint]"
+  )
+done
 zls_colors+=(
   "(*~*(directories|files|expansions))=(*[^ ]~*  *|)[ ]#(#b)(*)=$color[none]=$color[faint]"
   "$ls_colors[@]"
@@ -302,70 +296,68 @@ local -A git_colors=(
 )
 git config --global diff.colorMoved zebra
 
-() {
-  local -aU spec
-  local -i num
-  local slot col fg bg tmp
-  for slot col in "${(kv@)git_colors}"; do
-    [[ $col == target ]] &&
-        col=$ls_defaults[ln]
-    spec=() fg='' bg='' tmp=''
-    for num in ${(s.;.)col}; do
-      case $tmp$num in
-        1 )
-          spec+=( bold )
-          ;;
-        2 )
-          spec+=( dim )
-          ;;
-        3 )
-          spec+=( italic )
-          ;;
-        4 )
-          spec+=( ul )
-          ;;
-        5 )
-          spec+=( blink )
-          ;;
-        7 )
-          spec+=( reverse )
-          ;;
-        9 )
-          spec+=( strike )
-          ;;
-        <30-37> )
-          fg=$(( num - 30 ))
-          ;;
-        <40-47> )
-          bg=$(( num - 40 ))
-          ;;
-        <90-97> )
-          fg=$(( num - 90 + 8 ))
-          ;;
-        <100-107> )
-          bg=$(( num - 100 + 8 ))
-          ;;
-        (3|4)8(|\;5) )
-          tmp+="$num;"
-          ;;
-        38\;5\;<-> )
-          fg=$num
-          ;|
-        48\;5\;<0-15> )
-          bg=$num
-          ;|
-        (3|4)8\;5\;<-> )
-          tmp=
-          ;;
-      esac
-    done
-    spec=( "${fg:-normal}" "${bg:-normal}" $spec[@] )
-    if (( $#spec[@] )); then
-      git config --global "color.$slot" "$spec"
-    else
-      git config --global --unset "color.$slot"
-    fi
+local -aU spec=()
+local -i num=
+local slot= col= fg= bg= tmp=
+for slot col in "${(kv@)git_colors}"; do
+  [[ $col == target ]] &&
+      col=$ls_defaults[ln]
+  spec=() fg='' bg='' tmp=''
+  for num in ${(s.;.)col}; do
+    case $tmp$num in
+      1 )
+        spec+=( bold )
+        ;;
+      2 )
+        spec+=( dim )
+        ;;
+      3 )
+        spec+=( italic )
+        ;;
+      4 )
+        spec+=( ul )
+        ;;
+      5 )
+        spec+=( blink )
+        ;;
+      7 )
+        spec+=( reverse )
+        ;;
+      9 )
+        spec+=( strike )
+        ;;
+      <30-37> )
+        fg=$(( num - 30 ))
+        ;;
+      <40-47> )
+        bg=$(( num - 40 ))
+        ;;
+      <90-97> )
+        fg=$(( num - 90 + 8 ))
+        ;;
+      <100-107> )
+        bg=$(( num - 100 + 8 ))
+        ;;
+      (3|4)8(|\;5) )
+        tmp+="$num;"
+        ;;
+      38\;5\;<-> )
+        fg=$num
+        ;|
+      48\;5\;<0-15> )
+        bg=$num
+        ;|
+      (3|4)8\;5\;<-> )
+        tmp=
+        ;;
+    esac
   done
-}
+  spec=( "${fg:-normal}" "${bg:-normal}" $spec[@] )
+  if (( $#spec[@] )); then
+    git config --global "color.$slot" "$spec"
+  else
+    git config --global --unset "color.$slot"
+  fi
+done
 
 unfunction .lscolor

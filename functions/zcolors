@@ -234,10 +234,10 @@ print-style ':completion:*' list-separator ' '
 unfunction print-style
 
 local -A git_colors=(
-  branch.current        "$(.lscolor ln);$color[reverse]"
-  branch.local          "$(.lscolor ln)"
-  branch.plain          "$(.lscolor ln)"
-  branch.remote         "$(.lscolor so)"
+  branch.current        "$(.lscolor ln)"
+  branch.plain          "$(.lscolor ln);$color[faint]"
+  branch.local          "$(.lscolor ln);$color[faint]"
+  branch.remote         "$(.lscolor so);$color[faint]"
   branch.upstream       "$(.lscolor so)"
 
   decorate.HEAD         "$(.lscolor ln);$color[italic]"

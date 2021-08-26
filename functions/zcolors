@@ -222,7 +222,7 @@ print-style() {
       shift
   zstyle -L $1 $2
 }
-print-style -e ':completion:*:default' list-colors 'reply=( $zls_colors[@] )'
+print-style ':completion:*:default' list-colors "${(@q+)zls_colors}"
 print-style ':completion:*' group-name ''
 print-style ':completion:*' list-separator ' '
 unfunction print-style

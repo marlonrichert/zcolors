@@ -179,8 +179,8 @@ ZSH_HIGHLIGHT_STYLES[cursor-matchingbracket]=fg=0,bg=11
 typeset -p ZSH_HIGHLIGHT_STYLES
 
 typeset -gTU ZLS_COLORS zls_colors=(
-  "(events)=[[:space:]]#(|-)<->(#b)(*)=$(.lscolor no)=$color[faint]"
-  "(history-lines)=(#b)([[:space:]]#<->)*=$(.lscolor no)=$color[faint]"
+  "(events)=(|-)<->(#b)(*)=$(.lscolor no)=$color[faint]"
+  "(history-lines)=[[:space:]]#(#b)(<->) *=$(.lscolor no)=$color[faint]"
 )
 local -A comp_colors=(
   'file-descriptors'  "$syntax_colors[numeric-fd]"

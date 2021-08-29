@@ -2,7 +2,7 @@
 zcolors.plugin() {
   emulate -L zsh; setopt extendedglob warncreateglobal
 
-  autoload -Uz ${${(%):-%x}:h}/functions/*~*.zwc
+  autoload -Uz ${${(%):-%x}:P:h}/functions/*~*.zwc
 
   typeset -g zle_highlight=(
     isearch:fg=black,bg=11  # bright yellow

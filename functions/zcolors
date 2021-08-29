@@ -213,7 +213,7 @@ print-style() {
       shift
   zstyle -L $1 $2
 }
-print-style ':completion:*:default' list-colors "${(@q+)zls_colors}"
+print-style ':completion:*:default' list-colors "$zls_colors[@]"
 print-style ':completion:*' group-name ''
 print-style ':completion:*' list-separator ' '
 unfunction print-style

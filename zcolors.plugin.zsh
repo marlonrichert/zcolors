@@ -16,6 +16,15 @@ zcolors.plugin() {
     export -TU LESS less ' '
     less+=(  --use-color -DSkY )
   fi
+
+  autoload -Uz add-zsh-hook
+  add-zsh-hook precmd .zcolors.precmd
+  .zcolors.precmd() {
+    add-zsh-hook -d precmd .zcolors.precmd
+    unfunction .zcolors.precmd
+    zmodload -F zsh/parameter p:saliases
+    ls_colors+=( '*.'${(@k)^saliases}=$( lscolor sg ) )
+  }
 }
 
 {

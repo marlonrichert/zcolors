@@ -50,15 +50,6 @@ for k v in ${(kv@)ls_defaults}; do
 done
 typeset -p LS_COLORS
 
-.zcolors.precmd() {
-  add-zsh-hook -d precmd .zcolors.precmd
-  unfunction .zcolors.precmd
-  zmodload -F zsh/parameter p:saliases
-  ls_colors+=( '*.'${(@k)^saliases}=$ls_defaults[sg] )
-}
-type -f .zcolors.precmd
-print 'autoload -Uz add-zsh-hook\nadd-zsh-hook precmd .zcolors.precmd'
-
 local -A syntax_colors=(
   default       'no'
   comment       'mi'

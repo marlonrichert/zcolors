@@ -176,14 +176,15 @@ typeset -gTU ZLS_COLORS zls_colors=(
 local -A comp_colors=(
   'file-descriptors'  "$syntax_colors[numeric-fd]"
 
-  '(aliases|builtins|executables|functions|commands)' 'ex'
+  'aliases|builtins|executables|functions|commands' 'ex'
   'suffix-aliases'  'sg'
   'options'         'sg'
   'reserved-words'  'su'
 
   'glob(flags|quals)' 'di'
+  'named-directories' 'di'
 
-  '(global-aliases|modifiers|parameters)' 'ln'
+  'global-aliases|modifiers|parameters' 'ln'
 
   '*local*~*director*'        'ln'
   '*(branch|head)*~*remote*'  'ln'

@@ -23,7 +23,7 @@ zcolors.plugin() {
     add-zsh-hook -d precmd .zcolors.precmd
     unfunction .zcolors.precmd
     zmodload -F zsh/parameter p:saliases
-    ls_colors+=( '*.'${(@k)^saliases}=$( lscolor sg ) )
+    ls_colors+=( '*.'${(@k)^saliases}=${${$( lscolor sg )#$'\e['}%m} )
   }
 }
 

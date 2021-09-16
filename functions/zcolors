@@ -6,15 +6,13 @@ if [[ ! -v color ]]; then
   colors
 fi
 
-local -i i= num=
+local -i i=
 local name= code=
-for (( i = 0; i < 8; i++ )); do
+for (( i = 0; i <= 7; i++ )); do
   name=$color[$(( i + 30 ))]
-  for num name in $i "$name" $(( i + 8 )) "bright$name"; do
-    for code name in "38;5;$num" "$name" "48;5;$num" "bg-$name"; do
-      color[$code]="$name"
-      color[$name]="$code"
-    done
+  for code name in $(( i + 90 )) "bright$name" $(( i + 100 )) "bg-bright$name"; do
+    color[$code]="$name"
+    color[$name]="$code"
   done
 done
 color[03]=italic
@@ -114,8 +112,6 @@ local -aU spec=()
 local -i num=
 local syn= col= em= bg= fg= tmp=
 for syn col in "${(kv@)syntax_colors}"; do
-  [[ $col == target ]] &&
-      col=$ls_defaults[ln]
   spec=() em=0 col="$(.lscolor $col)" fg='' bg='' tmp=''
   for num in ${(s.;.)col}; do
     case $tmp$num in

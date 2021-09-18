@@ -232,7 +232,7 @@ local -A git_colors=(
   diff.commit      "$(.lscolor pi)"
   diff.meta        "$(.lscolor pi)"
   diff.frag        "$(.lscolor pi);$color[underline]"
-  diff.func        "$(.lscolor no)"
+  diff.func        "$(.lscolor no);$color[underline]"
   diff.context     "$(.lscolor no)"
   diff.contextBold "$(.lscolor no);$color[bold]"
   diff.new         "$color[brightgreen]"

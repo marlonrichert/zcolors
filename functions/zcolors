@@ -46,7 +46,6 @@ for k v in ${(kv@)ls_defaults}; do
   [[ -z $ls_colors[(r)$k=*] ]] &&
       ls_colors+=( "$k=$v" )
 done
-typeset -p LS_COLORS
 
 local -A syntax_colors=(
   default       'no'
@@ -347,5 +346,12 @@ for slot col in "${(kv@)git_colors}"; do
     git config --global --unset "color.$slot"
   fi
 done
+
+# `exa` uses $LS_COLORS, but does not support 90-97 or 100-107.
+# Workaround for https://github.com/ogham/exa/issues/959
+local MATCH MBEGIN MEND
+LS_COLORS=${LS_COLORS//(#m)(<90-97>|<100-107>)/$(( MATCH / 10 - 6 ))8\;5\;$(( MATCH % 10 + 8 ))}
+
+typeset -p LS_COLORS
 
 unfunction .lscolor

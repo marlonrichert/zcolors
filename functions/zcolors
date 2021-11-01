@@ -248,7 +248,7 @@ local -A git_colors=(
   diff.oldMovedDimmed "$color[cyan];$color[faint]"
   diff.oldMovedAlternative       "$color[brightblue];$color[faint]"
   diff.oldMovedAlternativeDimmed "$color[blue];$color[faint]"
-  diff.whitespace  "$color[reverse]"
+  diff.whitespace  "$color[bg-brightred]"
 
   # grep.column
   # grep.context

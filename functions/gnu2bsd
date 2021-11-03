@@ -11,11 +11,11 @@ local -A num_to_bsd=(
   6 g
   7 h
 )
-export LSCOLORS=''  # The BSD version does not have an underscore.
+export LSCOLORS=  # The BSD version does not have an underscore.
 local gnu num fg bg bold reverse iso
 local -i num
 for gnu in 'di' 'ln' 'so' 'pi' 'ex' 'bd' 'cd' 'su' 'sg' 'tw' 'ow'; do
-  fg=x bg=x bold=no reverse=no iso=''
+  fg=x bg=x bold=no reverse=no iso=
   for num in ${(s:;:)ls_colors[$gnu]}; do
     case $iso$num in
       '')
@@ -57,9 +57,7 @@ for gnu in 'di' 'ln' 'so' 'pi' 'ex' 'bd' 'cd' 'su' 'sg' 'tw' 'ow'; do
   [[ $bold == yes && fg != x ]] &&
     fg=$fg:u
   case $reverse in
-    no)
-      LSCOLORS+=$fg$bg ;;
-    yes)
-      LSCOLORS+=${${bg:#x}:-a}$fg ;;
+    ( no )  LSCOLORS+=$fg$bg ;;
+    ( yes ) LSCOLORS+=${${bg:#x}:-a}$fg ;;
   esac
 done

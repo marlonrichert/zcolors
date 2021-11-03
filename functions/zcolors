@@ -164,7 +164,7 @@ done
 ZSH_HIGHLIGHT_STYLES[cursor-matchingbracket]=fg=0,bg=11
 typeset -p ZSH_HIGHLIGHT_STYLES
 
-typeset -gTU ZLS_COLORS zls_colors=(
+local -aU zls_colors=(
   "(events)=(|-)<->(#b)(*)=$(.lscolor no)=$color[faint]"
   "(history-lines)=[[:space:]]#(#b)(<->) *=$(.lscolor no)=$color[faint]"
 )
@@ -201,7 +201,6 @@ zls_colors+=(
   "sa=$(.lscolor ex)"
   "ma=$color[brightwhite];$color[bg-blue]"
 )
-typeset -p ZLS_COLORS
 
 print-style() {
   zstyle "$@"
@@ -347,8 +346,8 @@ for slot col in "${(kv@)git_colors}"; do
   fi
 done
 
-# `exa` uses $LS_COLORS, but does not support 90-97 or 100-107.
 # Workaround for https://github.com/ogham/exa/issues/959
+# `exa` uses $LS_COLORS, but does not support 90-97 or 100-107.
 local MATCH MBEGIN MEND
 LS_COLORS=${LS_COLORS//(#m)(<90-97>|<100-107>)/$(( MATCH / 10 - 6 ))8\;5\;$(( MATCH % 10 + 8 ))}
 

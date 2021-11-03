@@ -28,7 +28,7 @@ Manually:
     % cd ~/Git  # or wherever you keep your Git repos/Zsh plugins
     % git clone https://github.com/marlonrichert/zcolors.git
     % autoload -Uz ~/Git/zcolors/functions/zcolors
-    % zcolors $LS_COLORS >| ~/.zcolors
+    % zcolors >| ~/.zcolors
     ```
 1.  In your `~/.zshrc` file, add:
     ```zsh
@@ -41,7 +41,7 @@ Manually:
     ```
 1.  Whenever you change your `$LS_COLORS`, do:
     ```zsh
-    % zcolors $LS_COLORS >| ~/.zcolors
+    % zcolors >| ~/.zcolors
     ```
 
 ## Usage
@@ -53,8 +53,9 @@ For your `$LS_COLORS` to be used to highlight your command line, you will need t
 [`zsh-syntax-highlighting`](https://github.com/zsh-users/zsh-syntax-highlighting).
 
 ### Prompt
-Z Colors provides a function `lscolor` that can output the current value of `di`, `ln`, `so`, `pi`, `ex`,
-`bd`, `cd`, `su`, `sg`, `tw` and `ow`. You can use it in your prompt as follows:
+Z Colors provides a function `lscolor` that can output the current value of `di`, `ln`, `so`, `pi`,
+`ex`, `bd`, `cd`, `su`, `sg`, `tw` and `ow` as a color escape code.  You can use it in your prompt
+as follows:
 ```zsh
 # di: dir color
 # %{...%}: zero-width output

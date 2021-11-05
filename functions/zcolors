@@ -220,7 +220,7 @@ local -A git_colors=(
   branch.remote         "$(.lscolor so);$color[faint]"
   branch.upstream       "$(.lscolor so)"
 
-  decorate.HEAD         "$(.lscolor ln);$color[italic]"
+  decorate.HEAD         "$(.lscolor ln);$color[faint]"
   decorate.branch       "$(.lscolor ln)"
   decorate.remotebranch "$(.lscolor so)"
   decorate.tag          "$(.lscolor pi)"

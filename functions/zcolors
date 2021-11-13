@@ -198,7 +198,7 @@ zls_colors+=(
   "$ls_colors[@]"
   "tc=$(.lscolor no)"
   "sp=$(.lscolor fi)"
-  "sa=$(.lscolor ex)"
+  "sa=$(.lscolor sg)"
   "ma=$color[brightwhite];$color[bg-blue]"
 )
 

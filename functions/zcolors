@@ -6,98 +6,94 @@ if [[ ! -v color ]]; then
   colors
 fi
 
-local -i i=
-local name= code=
-for (( i = 0; i <= 7; i++ )); do
-  name=$color[$(( i + 30 ))]
-  for code name in $(( i + 90 )) "bright$name" $(( i + 100 )) "bg-bright$name"; do
-    color[$code]="$name"
-    color[$name]="$code"
+() {
+  local -i i=
+  local name= code=
+  for (( i = 0; i <= 7; i++ )); do
+    name=$color[$(( i + 30 ))]
+    for code name in $(( i + 90 )) "bright$name" $(( i + 100 )) "bg-bright$name"; do
+      color[$code]="$name"
+      color[$name]="$code"
+    done
   done
-done
-color[03]=italic
-color[italic]=03
+  color[03]=italic
+  color[italic]=03
+}
 typeset -p color
 
 export -UT LS_COLORS ls_colors
 
+if [[ -z $LS_COLORS && -n $LSCOLORS ]]; then
+  () {
+    local -a col=() gnu=( di ln so pi ex bd cd su sg tw ow )
+    local -i i= em= upper=65 lower=97
+    local fg= bg=
+    for (( i = 1; i <= $#gnu[@]; i++ )) do
+      col=() em=0
+      fg=$LSCOLORS[i*2-1] bg=$LSCOLORS[i*2]
+      if [[ $fg == [[:upper:]] ]]; then
+        fg=${(L)fg}
+        (( em += 1 ))
+      fi
+      if [[ $bg != [ahx] ]]; then
+        for fg bg in $bg $fg; do done
+        (( em += 2 ))
+        if [[ $bg != [ahx] ]]; then
+          (( em += 1 ))
+          bg=x
+        fi
+      fi
+      printf -v col %d \'$fg \'$bg
+      if [[ $fg == x ]]; then
+        col[1]=$color[default]
+      else
+        col[1]=$(( col[1] - lower + 30 ))
+      fi
+      if [[ $bg == x ]]; then
+        col[2]=$color[bg-default]
+      else
+        col[2]=$(( col[2] - lower + 40 ))
+      fi
+      case $em in
+        ( <1-> )  col[1]=$(( col[1] + 60 ))
+                  ;|
+        ( 2 )     col+=( $color[italic] )     ;;
+        ( 3 )     col+=( $color[underline] )  ;;
+        ( 4 )     col+=( $color[bold] )       ;;
+      esac
+      col+=( $color[none] )
+      ls_colors+=( "$gnu[i]=${(j:;:)${(n@)col}}" )
+    done
+  }
+fi
+
 local -A ls_defaults=(
-  'no' "$color[none]"
-  'fi' "$color[white]"
-  'mi' "$color[brightblack]"
-  'or' "$color[red];$color[italic]"
-  'ex' "$color[brightgreen]"
-  'sg' "$color[brightyellow]"
-  'su' "$color[brightred]"
-  'st' "$color[blue]"
-  'di' "$color[brightblue]"
-  'tw' "$color[blue];$color[underline]"
-  'ow' "$color[brightblue];$color[underline]"
-  'ln' "$color[brightcyan]"
-  'so' "$color[brightmagenta]"
-  'pi' "$color[yellow]"
-  'cd' "$color[yellow];$color[bold]"
-  'bd' "$color[yellow];$color[italic]"
-  '*.DS_Store' "$color[faint]"
-  '*.zwc' "$color[faint]"
+    'no'  "$color[none];$color[default]"
+    'fi'  "$color[none];$color[white]"
+    'mi'  "$color[none];$color[brightblack]"
+    'or'  "$color[none];$color[red];$color[italic]"
+    'ex'  "$color[none];$color[brightgreen]"
+    'sg'  "$color[none];$color[brightyellow]"
+    'su'  "$color[none];$color[brightred]"
+    'st'  "$color[none];$color[blue]"
+    'di'  "$color[none];$color[brightblue]"
+    'tw'  "$color[none];$color[blue];$color[underline]"
+    'ow'  "$color[none];$color[brightblue];$color[underline]"
+    'ln'  "$color[none];$color[brightcyan]"
+    'so'  "$color[none];$color[brightmagenta]"
+    'pi'  "$color[none];$color[yellow]"
+    'cd'  "$color[none];$color[yellow];$color[bold]"
+    'bd'  "$color[none];$color[yellow];$color[italic]"
+    '*.DS_Store'  "$color[none];$color[faint]"
+    '*.zwc'       "$color[none];$color[faint]"
 )
-local k= v=
-for k v in ${(kv@)ls_defaults}; do
-  [[ -z $ls_colors[(r)$k=*] ]] &&
-      ls_colors+=( "$k=$v" )
-done
-
-local -A syntax_colors=(
-  default       'no'
-  comment       'mi'
-  unknown-token 'or'
-
-  arg0                    'ex'
-  builtins                'ex'
-  suffix-alias            'sg'
-  single-hyphen-option    'sg'
-  double-hyphen-option    'sg'
-  single-quoted-argument  'sg'
-  double-quoted-argument  'sg'
-  dollar-quoted-argument  'sg'
-  precommand              'su'
-  reserved-word           'su'
-
-  globbing                  'tw'
-  path_prefix               'di'
-  path_prefix_pathseparator 'st'
-  path                      'ow'
-  path_pathseparator        'tw'
-  autodirectory             'ow'
-
-  global-alias                  'ln'
-  rc-quote                      'ln'
-  dollar-double-quoted-argument 'ln'
-  assign                        'ln'
-  back-double-quoted-argument   'ln'
-  back-dollar-quoted-argument   'ln'
-  history-expansion             'ln'
-
-  back-quoted-argument-delimiter  'so'
-  command-substitution-delimiter  'so'
-  process-substitution-delimiter  'so'
-
-  back-quoted-argument  'no'
-  command-substitution  'no'
-  process-substitution  'no'
-
-  redirection       'pi'
-  commandseparator  'pi'
-  numeric-fd        'cd'
-  named-fd          'bd'
-
-  bracket-error   'or'
-  bracket-level-1 'so'
-  bracket-level-2 'so'
-  bracket-level-3 'so'
-  bracket-level-4 'so'
-  bracket-level-5 'so'
-)
+() {
+  local k= v=
+  for k v in ${(kv@)ls_defaults}; do
+    [[ -z $ls_colors[(r)$k=*] ]] &&
+        ls_colors+=( "$k=$v" )
+  done
+}
 
 .lscolor() {
   local col=${ls_colors[(r)$1=*]#$1=}
@@ -106,250 +102,291 @@ local -A syntax_colors=(
   print -r -- "$col"
 }
 
-typeset -g -A ZSH_HIGHLIGHT_STYLES=()
-local -aU spec=()
-local -i num=
-local syn= col= em= bg= fg= tmp=
-for syn col in "${(kv@)syntax_colors}"; do
-  spec=() em=0 col="$(.lscolor $col)" fg='' bg='' tmp=''
-  for num in ${(s.;.)col}; do
-    case $tmp$num in
-      ( 0 )
-        spec+=( none )
-      ;;
-      ( 1 )
-        spec+=( bold )
-      ;;
-      ( 4 )
-        spec+=( underline )
-      ;;
-      ( 3 | 7 )
-        spec+=( standout )
-      ;;
-      ( 39 )
-        fg=default
-      ;;
-      ( 49 )
-        bg=default
-      ;;
-      ( <30-37> )
-        fg=$(( num - 30 ))
-      ;;
-      ( <40-47> )
-        bg=$(( num - 40 ))
-      ;;
-      ( <90-97> )
-        fg=$(( num - 90 + 8 ))
-      ;;
-      ( <100-107> )
-        bg=$(( num - 100 + 8 ))
-      ;;
-      ( (3|4)8(|\;5) )
-        tmp+="$num;"
-      ;;
-      ( 38\;5\;<-> )
-        fg=$num
-      ;|
-      ( 48\;5\;<-> )
-        bg=$num
-      ;|
-      ( (3|4)8\;5\;<-> )
-        tmp=
-      ;;
-    esac
+if [[ $OSTYPE != linux-gnu && -z $LSCOLORS ]]; then
+  export LSCOLORS=  # The BSD version does not have an underscore.
+  () {
+    local -i num= upper=65 lower=97
+    local gnu= num= fg= bg= bold= reverse= iso= tmp=
+    for gnu in di ln so pi ex bd cd su sg tw ow; do
+      fg=x bg=x bold= reverse= iso=
+      for num in ${(s:;:)$( .lscolor $gnu )}; do
+        case $iso$num in
+          ( 1 )             bold=yes                        ;;
+          ( 3 | 4 | 7 )     reverse=yes                     ;;
+          ( <30-37> )       fg=${(#):-lower+num%10}         ;;
+          ( <40-47> )       bg=${(#):-lower+num%10}         ;;
+          ( <90-97> )       fg=${(#):-upper+num%10}         ;;
+          ( <100-107> )     bg=${(#):-upper+num%10}         ;;
+          ( 38 )            iso=fg                          ;;
+          ( 48 )            iso=bg                          ;;
+          ( [fb]g5 )        iso+=\=                         ;;
+          ( [fb]g=<0-7> )   eval "$iso${(#):-lower+num%8}"
+                            ;|
+          ( [fb]g=<8-15> )  eval "$iso${(#):-upper+num%8}"
+                            ;|
+          ( [fb]g=* )       iso=                            ;;
+        esac
+      done
+      [[ -n $reverse ]] &&
+          for fg bg in $bg $fg; do done
+      [[ -n $bold && fg != x ]] &&
+          fg=${(U)fg}
+      LSCOLORS+=$fg${(L)bg}
+    done
+  }
+  typeset -p LSCOLORS
+fi
+
+typeset -gA ZSH_HIGHLIGHT_STYLES=()
+() {
+  local -A syntax_colors=(
+      default       'no'
+      comment       'mi'
+      unknown-token 'or'
+
+      arg0                    'ex'
+      builtins                'ex'
+      suffix-alias            'sg'
+      single-hyphen-option    'sg'
+      double-hyphen-option    'sg'
+      single-quoted-argument  'sg'
+      double-quoted-argument  'sg'
+      dollar-quoted-argument  'sg'
+      precommand              'su'
+      reserved-word           'su'
+
+      path_prefix               'st'
+      path_prefix_pathseparator 'mi'
+      path                      'di'
+      path_pathseparator        'no'
+      globbing                  'tw'
+      autodirectory             'ow'
+
+      global-alias                  'ln'
+      rc-quote                      'ln'
+      dollar-double-quoted-argument 'ln'
+      assign                        'ln'
+      back-double-quoted-argument   'ln'
+      back-dollar-quoted-argument   'ln'
+      history-expansion             'ln'
+
+      back-quoted-argument-delimiter  'so'
+      command-substitution-delimiter  'so'
+      process-substitution-delimiter  'so'
+
+      back-quoted-argument  'no'
+      command-substitution  'no'
+      process-substitution  'no'
+
+      redirection       'pi'
+      commandseparator  'pi'
+      numeric-fd        'cd'
+      named-fd          'bd'
+
+      bracket-error   'or'
+      bracket-level-1 'so'
+      bracket-level-2 'so'
+      bracket-level-3 'so'
+      bracket-level-4 'so'
+      bracket-level-5 'so'
+  )
+  local -aU spec=()
+  local -i num=
+  local syn= col= em= bg= fg= tmp=
+  for syn col in "${(kv@)syntax_colors}"; do
+    spec=() em=0 col="$(.lscolor $col)" fg='' bg='' tmp=''
+    for num in ${(s.;.)col}; do
+      case $tmp$num in
+        ( 0 )               spec+=( none )          ;;
+        ( 1 )               spec+=( bold )          ;;
+        ( 3 | 4 | 7 )       spec+=( underline )     ;;
+        ( 39 )              fg=default              ;;
+        ( 49 )              bg=default              ;;
+        ( <30-37> )         fg=$(( num - 30 ))      ;;
+        ( <40-47> )         bg=$(( num - 40 ))      ;;
+        ( <90-97> )         fg=$(( num - 90 + 8 ))  ;;
+        ( <100-107> )       bg=$(( num - 100 + 8 )) ;;
+        ( (3|4)8(|\;5) )    tmp+="$num;"            ;;
+        ( 38\;5\;<-> )      fg=$num
+                            ;|
+        ( 48\;5\;<-> )      bg=$num
+                            ;|
+        ( (3|4)8\;5\;<-> )  tmp=                    ;;
+      esac
+    done
+    spec+=( ${fg:+fg=$fg} ${bg:+bg=$bg} )
+    ZSH_HIGHLIGHT_STYLES[$syn]="${(j:,:)spec}"
   done
-  spec+=( ${fg:+fg=$fg} ${bg:+bg=$bg} )
-  ZSH_HIGHLIGHT_STYLES[$syn]="${(j:,:)spec}"
-done
-ZSH_HIGHLIGHT_STYLES[cursor-matchingbracket]=fg=0,bg=11
+  ZSH_HIGHLIGHT_STYLES[cursor-matchingbracket]=fg=0,bg=11
+}
 typeset -p ZSH_HIGHLIGHT_STYLES
 
-local -aU zls_colors=(
-  "(events)=(|-)<->(#b)(*)=$(.lscolor no)=$color[faint]"
-  "(history-lines)=[[:space:]]#(#b)(<->) *=$(.lscolor no)=$color[faint]"
-)
-local -A comp_colors=(
-  'file-descriptors'  "$syntax_colors[numeric-fd]"
+() {
+  local -A comp_colors=(
+      'file-descriptors'  "$syntax_colors[numeric-fd]"
 
-  'aliases|builtins|executables|functions|commands' 'ex'
-  'suffix-aliases'  'sg'
-  'options'         'sg'
-  'reserved-words'  'su'
+      'aliases|builtins|executables|functions|commands' 'ex'
+      'suffix-aliases'  'sg'
+      'options'         'sg'
+      'reserved-words'  'su'
 
-  'glob(flags|quals)' 'di'
-  'named-directories' 'di'
+      'glob(flags|quals)' 'di'
+      'named-directories' 'di'
 
-  'global-aliases|modifiers|parameters' 'ln'
+      'global-aliases|modifiers|parameters' 'ln'
 
-  '*local*~*director*'        'ln'
-  '*(branch|head)*~*remote*'  'ln'
-  '*remote*~*(branch|head)*'  'so'
-  '*commit*~*-tag'            'pi'
-  '*-tag*~*commit*'           'cd'
-)
-local comp= col=
-for comp col in ${(kv@)comp_colors}; do
-  zls_colors+=(
-      "($comp)=(#b)(*[^ ]~*  *|)[ ]#(*)=$color[none]=$( .lscolor $col )=$color[faint]"
+      '*local*~*director*'        'ln'
+      '*(branch|head)*~*remote*'  'ln'
+      '*remote*~*(branch|head)*'  'so'
+      '*commit*~*-tag'            'pi'
+      '*-tag*~*commit*'           'cd'
   )
-done
-zls_colors+=(
-  "(*~*(directories|files|expansions))=(*[^ ]~*  *|)[ ]#(#b)(*)=$color[none]=$color[faint]"
-  "$ls_colors[@]"
-  "tc=$(.lscolor no)"
-  "sp=$(.lscolor fi)"
-  "sa=$(.lscolor sg)"
-  "ma=$color[brightwhite];$color[bg-blue]"
-)
 
-print-style() {
-  zstyle "$@"
-  [[ $1 == -e ]] &&
-      shift
-  zstyle -L $1 $2
-}
-print-style ':completion:*:default' list-colors "$zls_colors[@]"
-print-style ':completion:*' group-name ''
-print-style ':completion:*' list-separator ' '
-unfunction print-style
-
-local -A git_colors=(
-  branch.current        "$(.lscolor ln)"
-  branch.plain          "$(.lscolor ln);$color[faint]"
-  branch.local          "$(.lscolor ln);$color[faint]"
-  branch.remote         "$(.lscolor so);$color[faint]"
-  branch.upstream       "$(.lscolor so)"
-
-  decorate.HEAD         "$(.lscolor ln);$color[faint]"
-  decorate.branch       "$(.lscolor ln)"
-  decorate.remotebranch "$(.lscolor so)"
-  decorate.tag          "$(.lscolor pi)"
-  decorate.grafted      "$(.lscolor or)"
-  decorate.stash        "$(.lscolor mi)"
-
-  diff.commit      "$(.lscolor pi)"
-  diff.meta        "$(.lscolor mi)"
-  diff.frag        "$(.lscolor mi);$color[underline]"
-  diff.func        "$(.lscolor mi);$color[underline]"
-  diff.context     "$(.lscolor no)"
-  diff.contextBold "$(.lscolor no);$color[bold]"
-  diff.new         "$color[brightgreen]"
-  diff.newDimmed   "$color[green]"
-  diff.newBold     "$color[brightgreen];$color[bold]"
-  diff.old         "$color[brightred];$color[faint]"
-  diff.oldDimmed   "$color[red];$color[faint]"
-  diff.oldBold     "$color[brightred];$color[faint];$color[bold]"
-  diff.newMoved       "$color[brightcyan]"
-  diff.newMovedDimmed "$color[cyan]"
-  diff.newMovedAlternative       "$color[brightblue]"
-  diff.newMovedAlternativeDimmed "$color[blue]"
-  diff.oldMoved       "$color[brightcyan];$color[faint]"
-  diff.oldMovedDimmed "$color[cyan];$color[faint]"
-  diff.oldMovedAlternative       "$color[brightblue];$color[faint]"
-  diff.oldMovedAlternativeDimmed "$color[blue];$color[faint]"
-  diff.whitespace  "$color[bg-brightred]"
-
-  # grep.column
-  # grep.context
-  # grep.filename
-  # grep.function
-  # grep.linenumber
-  # grep.matchContext
-  # grep.matchSelected
-  # grep.selected
-  # grep.separator
-
-  interactive.header  "$(.lscolor mi);$color[bold]"
-  interactive.prompt  "$color[bg-blue];$color[brightwhite]"
-  interactive.help    "$(.lscolor mi)"
-  interactive.error   "$(.lscolor or)"
-
-  remote.error    "$color[red]"
-  remote.warning  "$color[yellow]"
-  remote.success  "$color[green]"
-  remote.hint     "$color[faint]"
-
-  status.header       "$(.lscolor no)"
-  status.branch       "$(.lscolor ln)"
-  status.localbranch  "$(.lscolor ln)"
-  status.remotebranch "$(.lscolor so)"
-  status.nobranch     "$(.lscolor or)"
-  status.added        "$color[brightgreen]"
-  status.updated      "$color[brightgreen]"
-  status.changed      "$color[brightyellow]"
-  status.unmerged     "$color[brightred]"
-  status.untracked    "$color[faint]"
-)
-git config --global diff.colorMoved zebra
-
-local -aU spec=()
-local -i num=
-local slot= col= fg= bg= tmp=
-for slot col in "${(kv@)git_colors}"; do
-  [[ $col == target ]] &&
-      col=$ls_defaults[ln]
-  spec=() fg='' bg='' tmp=''
-  for num in ${(s.;.)col}; do
-    case $tmp$num in
-      1 )
-        spec+=( bold )
-        ;;
-      2 )
-        spec+=( dim )
-        ;;
-      3 )
-        spec+=( italic )
-        ;;
-      4 )
-        spec+=( ul )
-        ;;
-      5 )
-        spec+=( blink )
-        ;;
-      7 )
-        spec+=( reverse )
-        ;;
-      9 )
-        spec+=( strike )
-        ;;
-      <30-37> )
-        fg=$(( num - 30 ))
-        ;;
-      <40-47> )
-        bg=$(( num - 40 ))
-        ;;
-      <90-97> )
-        fg=$(( num - 90 + 8 ))
-        ;;
-      <100-107> )
-        bg=$(( num - 100 + 8 ))
-        ;;
-      (3|4)8(|\;5) )
-        tmp+="$num;"
-        ;;
-      38\;5\;<-> )
-        fg=$num
-        ;|
-      48\;5\;<0-15> )
-        bg=$num
-        ;|
-      (3|4)8\;5\;<-> )
-        tmp=
-        ;;
-    esac
+  local -aU zls_colors=(
+      "(events)=(|-)<->(#b)(*)=$(.lscolor no)=$color[faint]"
+      "(history-lines)=[[:space:]]#(#b)(<->) *=$(.lscolor no)=$color[faint]"
+  )
+  local comp= col=
+  for comp col in ${(kv@)comp_colors}; do
+    zls_colors+=(
+        "($comp)=(#b)(*[^ ]~*  *|)[ ]#(*)=$color[none]=$( .lscolor $col )=$color[faint]"
+    )
   done
-  spec=( "${fg:-normal}" "${bg:-normal}" $spec[@] )
-  if (( $#spec[@] )); then
-    git config --global "color.$slot" "$spec"
-  else
-    git config --global --unset "color.$slot"
-  fi
-done
+  zls_colors+=(
+      "(*~*(directories|files|expansions))=(*[^ ]~*  *|)[ ]#(#b)(*)=$color[none]=$color[faint]"
+      "$ls_colors[@]"
+      "tc=$(.lscolor no)"
+      "sp=$(.lscolor fi)"
+      "sa=$(.lscolor sg)"
+      "ma=$color[brightwhite];$color[bg-blue]"
+  )
+
+  print-style() {
+    zstyle "$@"
+    [[ $1 == -e ]] &&
+        shift
+    zstyle -L $1 $2
+  }
+
+  print-style ':completion:*:default' list-colors "$zls_colors[@]"
+  print-style ':completion:*' group-name ''
+  print-style ':completion:*' list-separator ' '
+
+  unfunction print-style
+}
+
+() {
+  local -A git_colors=(
+      branch.current        "$(.lscolor ln)"
+      branch.plain          "$(.lscolor ln);$color[faint]"
+      branch.local          "$(.lscolor ln);$color[faint]"
+      branch.remote         "$(.lscolor so);$color[faint]"
+      branch.upstream       "$(.lscolor so)"
+
+      decorate.HEAD         "$(.lscolor ln);$color[faint]"
+      decorate.branch       "$(.lscolor ln)"
+      decorate.remotebranch "$(.lscolor so)"
+      decorate.tag          "$(.lscolor pi)"
+      decorate.grafted      "$(.lscolor or)"
+      decorate.stash        "$(.lscolor mi)"
+
+      diff.commit      "$(.lscolor pi)"
+      diff.meta        "$(.lscolor mi)"
+      diff.frag        "$(.lscolor mi);$color[underline]"
+      diff.func        "$(.lscolor mi);$color[underline]"
+      diff.context     "$(.lscolor no)"
+      diff.contextBold "$(.lscolor no);$color[bold]"
+      diff.new         "$color[brightgreen]"
+      diff.newDimmed   "$color[green]"
+      diff.newBold     "$color[brightgreen];$color[bold]"
+      diff.old         "$color[brightred];$color[faint]"
+      diff.oldDimmed   "$color[red];$color[faint]"
+      diff.oldBold     "$color[brightred];$color[faint];$color[bold]"
+      diff.newMoved       "$color[brightcyan]"
+      diff.newMovedDimmed "$color[cyan]"
+      diff.newMovedAlternative       "$color[brightblue]"
+      diff.newMovedAlternativeDimmed "$color[blue]"
+      diff.oldMoved       "$color[brightcyan];$color[faint]"
+      diff.oldMovedDimmed "$color[cyan];$color[faint]"
+      diff.oldMovedAlternative       "$color[brightblue];$color[faint]"
+      diff.oldMovedAlternativeDimmed "$color[blue];$color[faint]"
+      diff.whitespace  "$color[bg-brightred]"
+
+      # grep.column
+      # grep.context
+      # grep.filename
+      # grep.function
+      # grep.linenumber
+      # grep.matchContext
+      # grep.matchSelected
+      # grep.selected
+      # grep.separator
+
+      interactive.header  "$(.lscolor mi);$color[bold]"
+      interactive.prompt  "$color[bg-blue];$color[brightwhite]"
+      interactive.help    "$(.lscolor mi)"
+      interactive.error   "$(.lscolor or)"
+
+      remote.error    "$color[red]"
+      remote.warning  "$color[yellow]"
+      remote.success  "$color[green]"
+      remote.hint     "$color[faint]"
+
+      status.header       "$(.lscolor no)"
+      status.branch       "$(.lscolor ln)"
+      status.localbranch  "$(.lscolor ln)"
+      status.remotebranch "$(.lscolor so)"
+      status.nobranch     "$(.lscolor or)"
+      status.added        "$color[brightgreen]"
+      status.updated      "$color[brightgreen]"
+      status.changed      "$color[brightyellow]"
+      status.unmerged     "$color[brightred]"
+      status.untracked    "$color[faint]"
+  )
+  local -aU spec=()
+  local -i num=
+  local slot= col= fg= bg= tmp=
+  for slot col in "${(kv@)git_colors}"; do
+    [[ $col == target ]] &&
+        col=$ls_defaults[ln]
+    spec=() fg='' bg='' tmp=''
+    for num in ${(s.;.)col}; do
+      case $tmp$num in
+        ( 1 )               spec+=( bold )          ;;
+        ( 2 )               spec+=( dim )           ;;
+        ( 3 )               spec+=( italic )        ;;
+        ( 4 )               spec+=( ul )            ;;
+        ( 5 )               spec+=( blink )         ;;
+        ( 7 )               spec+=( reverse )       ;;
+        ( 9 )               spec+=( strike )        ;;
+        ( <30-37> )         fg=$(( num - 30 ))      ;;
+        ( <40-47> )         bg=$(( num - 40 ))      ;;
+        ( <90-97> )         fg=$(( num - 90 + 8 ))  ;;
+        ( <100-107> )       bg=$(( num - 100 + 8 )) ;;
+        ( (3|4)8(|\;5) )    tmp+="$num;"            ;;
+        ( 38\;5\;<-> )      fg=$num
+                            ;|
+        ( 48\;5\;<0-15> )   bg=$num
+                            ;|
+        ( (3|4)8\;5\;<-> )  tmp=                    ;;
+      esac
+    done
+    spec=( "${fg:-normal}" "${bg:-normal}" $spec[@] )
+    if (( $#spec[@] )); then
+      git config --global "color.$slot" "$spec"
+    else
+      git config --global --unset "color.$slot"
+    fi
+  done
+  git config --global diff.colorMoved zebra
+}
 
 # Workaround for https://github.com/ogham/exa/issues/959
 # `exa` uses $LS_COLORS, but does not support 90-97 or 100-107.
-local MATCH MBEGIN MEND
-LS_COLORS=${LS_COLORS//(#m)(<90-97>|<100-107>)/$(( MATCH / 10 - 6 ))8\;5\;$(( MATCH % 10 + 8 ))}
+() {
+  local MATCH MBEGIN MEND
+  LS_COLORS=${LS_COLORS//(#m)(<90-97>|<100-107>)/$(( MATCH / 10 - 6 ))8\;5\;$(( MATCH % 10 + 8 ))}
+}
 
 typeset -p LS_COLORS
 

@@ -1,6 +1,7 @@
 #!/bin/zsh
 zcolors.plugin() {
   emulate -L zsh; setopt extendedglob warncreateglobal
+  autoload -Uz add-zsh-hook
 
   autoload -Uz ${${(%):-%x}:P:h}/functions/*~*.zwc
 
@@ -17,14 +18,13 @@ zcolors.plugin() {
     less+=(  --use-color -DSkY )
   fi
 
-  autoload -Uz add-zsh-hook
-  add-zsh-hook precmd .zcolors.precmd
   .zcolors.precmd() {
     add-zsh-hook -d precmd .zcolors.precmd
     unfunction .zcolors.precmd
     zmodload -F zsh/parameter p:saliases
     typeset -g ls_colors=( $ls_colors[@] '*.'${(@k)^saliases}=${${$( lscolor sg )#$'\e['}%m} )
   }
+  add-zsh-hook precmd .zcolors.precmd
 }
 
 {

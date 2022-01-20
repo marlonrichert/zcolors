@@ -70,22 +70,22 @@ if [[ -z $LS_COLORS && -n $LSCOLORS ]]; then
 fi
 
 local -A ls_defaults=(
-    no  "$color[none];$color[default]"
-    fi  "$color[none];$color[white]"
-    mi  "$color[none];$color[brightblack]"
-    or  "$color[none];$color[red];$color[italic]"
-    ex  "$color[none];$color[brightgreen]"
-    sg  "$color[none];$color[brightyellow]"
-    su  "$color[none];$color[brightred]"
-    st  "$color[none];$color[blue]"
-    di  "$color[none];$color[brightblue]"
-    tw  "$color[none];$color[blue];$color[underline]"
-    ow  "$color[none];$color[brightblue];$color[underline]"
-    ln  "$color[none];$color[brightcyan]"
-    so  "$color[none];$color[brightmagenta]"
-    pi  "$color[none];$color[yellow]"
-    cd  "$color[none];$color[yellow];$color[bold]"
-    bd  "$color[none];$color[yellow];$color[italic]"
+    'no'  "$color[none];$color[normal];$color[default]"
+    'fi'  "$color[none];$color[white]"
+    'mi'  "$color[none];$color[brightblack]"
+    'or'  "$color[none];$color[red];$color[italic]"
+    'ex'  "$color[none];$color[brightgreen]"
+    'sg'  "$color[none];$color[brightyellow]"
+    'su'  "$color[none];$color[brightred]"
+    'st'  "$color[none];$color[blue]"
+    'di'  "$color[none];$color[brightblue]"
+    'tw'  "$color[none];$color[blue];$color[underline]"
+    'ow'  "$color[none];$color[brightblue];$color[underline]"
+    'ln'  "$color[none];$color[brightcyan]"
+    'so'  "$color[none];$color[brightmagenta]"
+    'pi'  "$color[none];$color[yellow]"
+    'cd'  "$color[none];$color[yellow];$color[bold]"
+    'bd'  "$color[none];$color[yellow];$color[italic]"
     '*.DS_Store'  "$color[none];$color[faint]"
     '*.zwc'       "$color[none];$color[faint]"
 )
@@ -263,21 +263,21 @@ typeset -p ZSH_HIGHLIGHT_STYLES
   )
 
   local -aU zls_colors=(
-      "(events)=(|-)<->(#b)(*)=$zcolor[no]=$color[faint]"
-      "(history-lines)=[[:space:]]#(#b)(<->) *=$zcolor[no]=$color[faint]"
+      "(events)=(|-)<->(#b)(*)=$zcolor[no]=$zcolor[mi]"
+      "(history-lines)=[[:space:]]#(#b)(<->) *=$zcolor[no]=$zcolor[mi]"
   )
   local comp= col=
   for comp col in ${(kv@)comp_colors}; do
     zls_colors+=(
-        "($comp)=(#b)(*[^ ]~*  *|)[ ]#(*)=$color[none]=$zcolor[$col]=$color[faint]"
+        "($comp)=(#b)(*[^ ]~*  *|)[ ]#(*)=$zcolor[no]=$zcolor[$col]=$zcolor[mi]"
     )
   done
 
   zls_colors+=(
-      "(*~*(directories|files|expansions))=(*[^ ]~*  *|)[ ]#(#b)(*)=$color[none]=$color[faint]"
+      "(*~*(directories|files|expansions))=(*[^ ]~*  *|)[ ]#(#b)(*)=$zcolor[no]=$zcolor[mi]"
       "${${(k@)zcolor}[@]:/(#m)*/$MATCH=$zcolor[$MATCH]}"
       "tc=$zcolor[$syntax_colors[path_pathseparator]]"
-      "sp=$zcolor[fi]"
+      "sp=$zcolor[no]"
       "sa=$zcolor[$syntax_colors[suffix-alias]]"
       "ma=$color[brightwhite];$color[bg-blue]"
   )

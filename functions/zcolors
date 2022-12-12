@@ -101,14 +101,17 @@ typeset -gA zcolor=()
 () {
   local -a val=()
   local -i ifg= ibg=
-  local col= gnu= vfg= vbg= em=
+  local col= key= vfg= vbg= em=
   for col in ${ls_colors[@]:/ln=target/$ls_defaults[ln]}; do
-    gnu=${(M)col#*=}
-    col=${col#$gnu}
-    col=${col//(#m)<38-38>\;<5-5>\;(<0-7>)/$(( 30 + match[1] ))}
-    col=${col//(#m)<38-38>\;<5-5>\;(<8-15>)/$(( 82 + match[1] ))}
-    col=${col//(#m)<48-48>\;<5-5>\;(<0-7>)/$(( 40 + match[1] ))}
-    col=${col//(#m)<48-48>\;<5-5>\;(<8-15>)/$(( 92 + match[1] ))}
+    key=${${(M)col#*=}%=}
+    col=${col#$key=}
+
+    # Order here matters. Otherwise, <0-7> might eat the first char of <8-15>.
+    col=${col//(#b)'38;5;'(<8-15>)/$(( 82 + ${match[@][1]} ))}
+    col=${col//(#b)'38;5;'(<0-7>)/$(( 30 + ${match[@][1]} ))}
+    col=${col//(#b)'48;5;'(<8-15>)/$(( 92 + ${match[@][1]} ))}
+    col=${col//(#b)'48;5;'(<0-7>)/$(( 40 + ${match[@][1]} ))}
+
     val=( ${(s:;:)col} )
     ifg=$val[(i)(<30-39>|<90-97>)]
     vfg=${val[ifg]:=39}
@@ -129,7 +132,7 @@ typeset -gA zcolor=()
       fi
     fi
     val+=( $color[none] )
-    zcolor[${gnu%=}]=${(j:;:)${(un@)val}}
+    zcolor[$key]=${(j:;:)${(un@)val}}
   done
 }
 typeset -p zcolor

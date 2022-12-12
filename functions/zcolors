@@ -25,7 +25,7 @@ typeset -p color
 
 export -UT LS_COLORS ls_colors
 
-if [[ -z $LS_COLORS && -n $LSCOLORS ]]; then
+if [[ -v $LS_COLORS && -n $LSCOLORS ]]; then
   () {
     local -a col=() gnu=( di ln so pi ex bd cd su sg tw ow )
     local -i i= em= upper=65 lower=97
@@ -71,18 +71,18 @@ fi
 
 local -A ls_defaults=(
     'no'  "$color[none];$color[normal];$color[default]"
-    'fi'  "$color[none];$color[white]"
-    'mi'  "$color[none];$color[brightblack]"
+    'fi'  "$color[none];$color[normal];$color[default]"
+    'mi'  "$color[none];$color[default];$color[faint]"
     'or'  "$color[none];$color[red];$color[italic]"
     'ex'  "$color[none];$color[brightgreen]"
     'sg'  "$color[none];$color[brightyellow]"
     'su'  "$color[none];$color[brightred]"
-    'st'  "$color[none];$color[blue]"
-    'di'  "$color[none];$color[brightblue]"
+    'st'  "$color[none];$color[blue];$color[faint]"
+    'di'  "$color[none];$color[blue]"
     'tw'  "$color[none];$color[blue];$color[underline]"
-    'ow'  "$color[none];$color[brightblue];$color[underline]"
-    'ln'  "$color[none];$color[brightcyan]"
-    'so'  "$color[none];$color[brightmagenta]"
+    'ow'  "$color[none];$color[blue];$color[underline];$color[italic]"
+    'ln'  "$color[none];$color[cyan]"
+    'so'  "$color[none];$color[magenta]"
     'pi'  "$color[none];$color[yellow]"
     'cd'  "$color[none];$color[yellow];$color[bold]"
     'bd'  "$color[none];$color[yellow];$color[italic]"

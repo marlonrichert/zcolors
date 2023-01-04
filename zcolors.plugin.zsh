@@ -25,10 +25,6 @@ zcolors.plugin() {
     less+=( --use-color '-DSkY$DPWB'  )
   fi
 
-  # TODO: Let the plugin itself generate and cache the output of zcolors.
-  # Invalidate when Git index is newer than cache or $LS_COLORS is newer than the one in cache.
-  # If LS_COLORS is empty or not set, store the default $LS_COLORS in cache.
-
   add-zsh-hook precmd .zcolors.precmd
   .zcolors.precmd() {
     add-zsh-hook -d precmd .zcolors.precmd

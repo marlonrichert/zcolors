@@ -106,7 +106,7 @@ typeset -gA zcolor=()
     key=${${(M)col#*=}%=}
     col=${col#$key=}
 
-    # Order here matters. Otherwise, <0-7> might eat the first char of <8-15>.
+    # Order here matters. Otherwise, ...;<0-7> can eat the first char of 38;.. or 48;...
     col=${col//(#b)'38;5;'(<8-15>)/$(( 82 + ${match[@][1]} ))}
     col=${col//(#b)'38;5;'(<0-7>)/$(( 30 + ${match[@][1]} ))}
     col=${col//(#b)'48;5;'(<8-15>)/$(( 92 + ${match[@][1]} ))}
@@ -297,6 +297,18 @@ typeset -p ZSH_HIGHLIGHT_STYLES
   unfunction print-style
 }
 
+# Workaround for https://github.com/ogham/exa/issues/959
+# `exa` uses $LS_COLORS, but does not support 90-97 or 100-107.
+LS_COLORS=${LS_COLORS//(#m)(<90-97>|<100-107>)/$(( MATCH / 10 - 6 ))8\;5\;$(( MATCH % 10 + 8 ))}
+
+typeset -p LS_COLORS
+
+
+# Workaround for "error: could not lock config file: File exists".
+[[ -f $XDG_CONFIG_HOME/git/config.lock || -f ~/.gitconfig.lock ]] &&
+    return
+
+
 () {
   local -A git_colors=(
       branch.current        "$zcolor[ln];$color[reverse]"
@@ -394,9 +406,3 @@ typeset -p ZSH_HIGHLIGHT_STYLES
   done
   git config --global diff.colorMoved zebra
 }
-
-# Workaround for https://github.com/ogham/exa/issues/959
-# `exa` uses $LS_COLORS, but does not support 90-97 or 100-107.
-LS_COLORS=${LS_COLORS//(#m)(<90-97>|<100-107>)/$(( MATCH / 10 - 6 ))8\;5\;$(( MATCH % 10 + 8 ))}
-
-typeset -p LS_COLORS

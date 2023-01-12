@@ -22,7 +22,7 @@ zcolors.plugin() {
     # First letter is foreground, second letter is background.
     # $ separates multiple instance of the same flag.
     export -TU LESS less ' '
-    less+=( --use-color '-DSkY$DPWB'  )
+    less+=( --use-color '-DSkY$DPWb'  )
   fi
 
   add-zsh-hook precmd .zcolors.precmd

@@ -325,9 +325,9 @@ typeset -p LS_COLORS
       decorate.stash        "$zcolor[mi]"
 
       diff.commit                     "$zcolor[pi]"
-      diff.meta                       "$color[faint]"
-      diff.frag                       "$color[faint];$color[italic]"
-      diff.func                       "$color[faint];$color[italic]"
+      diff.meta                       "$zcolor[no];$color[italic]"
+      diff.frag                       "$zcolor[no];$color[faint]"
+      diff.func                       "$zcolor[ex];$color[faint]"
       diff.context                    "$zcolor[no]"
       diff.contextBold                "$zcolor[no];$color[bold]"
       diff.new                        "$color[brightgreen]"

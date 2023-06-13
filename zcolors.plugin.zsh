@@ -7,9 +7,9 @@ zcolors.plugin() {
 
   typeset -g zle_highlight=(
     isearch:fg=black,bg=11  # bright yellow
-    special:fg=14           # bright cyan
     paste:bold
     region:bg=blue,fg=15    # bright white
+    special:fg=14           # bright cyan
     suffix:bg=blue,fg=15    # bright white
   )
 
@@ -22,7 +22,7 @@ zcolors.plugin() {
     # First letter is foreground, second letter is background.
     # $ separates multiple instance of the same flag.
     export -TU LESS less ' '
-    less+=( --use-color '-DSkY$DPWB'  )
+    less+=( --use-color '-DSkY$DPWb'  ) # black on bright yellow & white on dark blue
   fi
 
   add-zsh-hook precmd .zcolors.precmd
@@ -30,7 +30,7 @@ zcolors.plugin() {
     add-zsh-hook -d precmd .zcolors.precmd
     unfunction .zcolors.precmd
     zmodload -F zsh/parameter p:saliases
-    typeset -g ls_colors=( $ls_colors[@] '*.'${(@k)^saliases}=${${$( lscolor sg )#$'\e['}%m} )
+    ls_colors+=( '*.'${(@k)^saliases}=${${$( lscolor sg )#$'\e['}%m} )
   }
 }
 

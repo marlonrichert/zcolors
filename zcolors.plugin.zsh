@@ -13,7 +13,8 @@ zcolors.plugin() {
     suffix:bg=blue,fg=15    # bright white
   )
 
-  export GREP_COLOR='30;103'  # black on bright yellow
+  export GREP_COLOR='30;103'      # black on bright yellow
+  export GREP_COLORS='mt=30;103'  # Grep >= 3
 
   if command -v less > /dev/null && (( ${${=$( less -V )}[2]} >= 581 )); then
     # -D configures colors.

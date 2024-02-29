@@ -1,8 +1,9 @@
 #!/bin/zsh
 zcolors.plugin() {
-  emulate -L zsh; setopt extendedglob warncreateglobal
-  autoload -Uz add-zsh-hook
+  emulate -L zsh
+  setopt extendedglob warncreateglobal
 
+  autoload -Uz add-zsh-hook
   autoload -Uz ${${(%):-%x}:P:h}/functions/[[:alpha:]]*~*.zwc
 
   typeset -g zle_highlight=(
@@ -13,17 +14,15 @@ zcolors.plugin() {
     suffix:bg=blue,fg=15    # bright white
   )
 
-  export GREP_COLOR='30;103'      # black on bright yellow
-  export GREP_COLORS='mt=30;103'  # Grep >= 3
+  export GREP_COLOR='30;103'           # black on bright yellow
+  export GREP_COLORS="mt=$GREP_COLOR"  # GNU grep >= 3
 
-  if command -v less > /dev/null && (( ${${=$( less -V )}[2]} >= 581 )); then
-    # -D configures colors.
-    # S = search results
-    # P = prompt at the bottom of the screen
-    # First letter is foreground, second letter is background.
-    # $ separates multiple instance of the same flag.
-    export -TU LESS less ' '
-    less+=( --use-color '-DSkY$DPWb'  ) # black on bright yellow & white on dark blue
+  if whence -p less > /dev/null && (( ${${=$( less -V )}[2]} >= 581 )); then
+    export -T LESS less ' '
+
+    # [S]earch results: blac[k] on bright [Y]ellow
+    # [P]rompt: bright [W]hite on [b]lue
+    less+=( --use-color '-DSkY$DPWb'  )
   fi
 
   add-zsh-hook precmd .zcolors.precmd

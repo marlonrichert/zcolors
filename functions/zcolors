@@ -23,51 +23,7 @@ fi
 }
 typeset -p color
 
-export -UT LS_COLORS ls_colors
-
-if [[ -v $LS_COLORS && -n $LSCOLORS ]]; then
-  () {
-    local -a col=() gnu=( di ln so pi ex bd cd su sg tw ow )
-    local -i i= em= upper=65 lower=97
-    local fg= bg=
-    for (( i = 1; i <= $#gnu[@]; i++ )) do
-      col=() em=0
-      fg=$LSCOLORS[i*2-1] bg=$LSCOLORS[i*2]
-      if [[ $fg == [[:upper:]] ]]; then
-        fg=${(L)fg}
-        (( em += 1 ))
-      fi
-      if [[ $bg != [ahx] ]]; then
-        for fg bg in $bg $fg; do done
-        (( em += 2 ))
-        if [[ $bg != [ahx] ]]; then
-          (( em += 1 ))
-          bg=x
-        fi
-      fi
-      printf -v col %d \'$fg \'$bg
-      if [[ $fg == x ]]; then
-        col[1]=$color[default]
-      else
-        col[1]=$(( col[1] - lower + 30 ))
-      fi
-      if [[ $bg == x ]]; then
-        col[2]=$color[bg-default]
-      else
-        col[2]=$(( col[2] - lower + 40 ))
-      fi
-      case $em in
-        ( <1-> )  col[1]=$(( col[1] + 60 ))
-                  ;|
-        ( 2 )     col+=( $color[italic] )     ;;
-        ( 3 )     col+=( $color[underline] )  ;;
-        ( 4 )     col+=( $color[bold] )       ;;
-      esac
-      col+=( $color[none] )
-      ls_colors+=( "$gnu[i]=${(j:;:)${(n@)col}}" )
-    done
-  }
-fi
+export -UT LS_COLORS=$1 ls_colors
 
 local -A ls_defaults=(
     'no'  "$color[none];$color[normal];$color[default]"

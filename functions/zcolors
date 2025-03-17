@@ -219,11 +219,11 @@ typeset -p ZSH_HIGHLIGHT_STYLES
                           $syntax_colors[global-alias]
       'file-descriptors'  $syntax_colors[numeric-fd]
 
-      '*local*~*director*'        ln
-      '*(branch|head)*~*remote*'  ln
-      '*remote*~*(branch|head)*'  so
+      '*local*~*director*'        di
+      '*(branch|head)*~*remote*'  di
+      '*remote*~*(branch|head)*'  ln
       '*commit*~*-tag'            pi
-      '*-tag*~*commit*'           cd
+      '*-tag*~*commit*'           so
   )
 
   local -aU zls_colors=(
@@ -268,39 +268,40 @@ typeset -p LS_COLORS
 
 () {
   local -A git_colors=(
-      branch.current        "$zcolor[ln];$color[reverse]"
-      branch.plain          "$zcolor[ln]"
-      branch.local          "$zcolor[ln]"
-      branch.remote         "$zcolor[so]"
-      branch.upstream       "$zcolor[so]"
+      branch.current        "$zcolor[ow]"
+      branch.local          "$zcolor[di]"
+      branch.upstream       "$zcolor[ln]"
+      branch.remote         "$zcolor[ln]"
+      branch.plain          "$zcolor[di]"
 
-      decorate.HEAD         "$zcolor[ln];$color[italic]"
-      decorate.branch       "$zcolor[ln]"
-      decorate.remotebranch "$zcolor[so]"
-      decorate.tag          "$zcolor[pi]"
+      decorate.HEAD         "$zcolor[ow]"
+      decorate.branch       "$zcolor[di]"
+      decorate.remotebranch "$zcolor[ln]"
+      decorate.tag          "$zcolor[so]"
       decorate.grafted      "$zcolor[or]"
       decorate.stash        "$zcolor[mi]"
 
       diff.commit                     "$zcolor[pi]"
-      diff.meta                       "$zcolor[no];$color[faint]"
-      diff.frag                       "$zcolor[no];$color[faint]"
-      diff.func                       "$zcolor[no];$color[faint]"
+      diff.meta                       "$zcolor[mi]"
+      diff.frag                       "$zcolor[mi]"
+      diff.func                       "$zcolor[mi]"
       diff.context                    "$zcolor[no]"
+      diff.contextDimmed              "$zcolor[no];$color[dim]"
       diff.contextBold                "$zcolor[no];$color[bold]"
       diff.new                        "$color[bg-green];$color[brightwhite]"
-      diff.newDimmed                  "$color[bg-green];$color[brightwhite];$color[faint]"
+      diff.newDimmed                  "$color[bg-green];$color[brightwhite];$color[dim]"
       diff.newBold                    "$color[bg-green];$color[brightwhite];$color[bold]"
-      diff.newMoved                   "$color[bg-yellow];$color[brightwhite]"
-      diff.newMovedDimmed             "$color[bg-yellow];$color[brightwhite];$color[faint]"
+      diff.newMoved                   "$color[bg-blue];$color[brightwhite]"
+      diff.newMovedDimmed             "$color[bg-blue];$color[brightwhite];$color[dim]"
       diff.newMovedAlternative        "$color[bg-magenta];$color[brightwhite]"
-      diff.newMovedAlternativeDimmed  "$color[bg-magenta];$color[brightwhite];$color[faint]"
+      diff.newMovedAlternativeDimmed  "$color[bg-magenta];$color[brightwhite];$color[dim]"
       diff.old                        "$color[bg-red];$color[white]"
-      diff.oldDimmed                  "$color[bg-red];$color[white];$color[faint]"
+      diff.oldDimmed                  "$color[bg-red];$color[white];$color[dim]"
       diff.oldBold                    "$color[bg-red];$color[white];$color[bold]"
-      diff.oldMoved                   "$color[bg-yellow];$color[white]"
-      diff.oldMovedDimmed             "$color[bg-yellow];$color[white];$color[faint]"
+      diff.oldMoved                   "$color[bg-blue];$color[white]"
+      diff.oldMovedDimmed             "$color[bg-blue];$color[white];$color[dim]"
       diff.oldMovedAlternative        "$color[bg-magenta];$color[white]"
-      diff.oldMovedAlternativeDimmed  "$color[bg-magenta];$color[white];$color[faint]"
+      diff.oldMovedAlternativeDimmed  "$color[bg-magenta];$color[white];$color[dim]"
       diff.whitespace                 "$color[bg-brightred]"
 
       # grep.column
@@ -314,32 +315,32 @@ typeset -p LS_COLORS
       # grep.separator
 
       interactive.header  "$zcolor[mi];$color[bold]"
-      interactive.prompt  "$color[bg-blue];$color[brightwhite]"
+      interactive.prompt  "$zcolor[ow]"
       interactive.help    "$zcolor[mi]"
-      interactive.error   "$zcolor[or]"
+      interactive.error   "$zcolor[su]"
 
-      remote.error    "$color[red]"
-      remote.warning  "$color[yellow]"
-      remote.success  "$color[green]"
-      remote.hint     "$color[faint]"
+      remote.error    "$zcolor[su]"
+      remote.warning  "$zcolor[sg]"
+      remote.success  "$zcolor[ex]"
+      remote.hint     "$zcolor[mi]"
 
       status.header       "$zcolor[no]"
-      status.branch       "$zcolor[ln]"
-      status.localbranch  "$zcolor[ln]"
-      status.remotebranch "$zcolor[so]"
+      status.branch       "$zcolor[di]"
+      status.localbranch  "$zcolor[di]"
+      status.remotebranch "$zcolor[ln]"
       status.nobranch     "$zcolor[or]"
-      status.added        "$color[brightgreen]"
-      status.updated      "$color[brightgreen]"
-      status.changed      "$color[brightyellow]"
-      status.unmerged     "$color[brightred]"
+      status.added        "$zcolor[ex]"
+      status.updated      "$zcolor[ex]"
+      status.changed      "$zcolor[sg]"
+      status.unmerged     "$zcolor[su]"
       status.untracked    "$zcolor[mi]"
   )
   local -aU spec=()
   local -i num=
-  local slot= col= fg= bg=
-  for slot col in "${(kv@)git_colors}"; do
+  local slot= entry= fg= bg=
+  for slot entry in "${(kv@)git_colors}"; do
     spec=() fg= bg=
-    for num in ${(s.;.)col}; do
+    for num in ${(s.;.)entry}; do
       case $num in
         ( <1-1> )     spec+=( bold )          ;;
         ( <2-2> )     spec+=( dim )           ;;

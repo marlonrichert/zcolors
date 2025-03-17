@@ -60,40 +60,20 @@ ls_defaults+=(
 
 typeset -gA zcolor=()
 () {
-  local -a val=()
-  local -i ifg= ibg=
-  local col= key= vfg= vbg= em=
-  for col in ${ls_colors[@]:/ln=target/$ls_defaults[ln]}; do
-    key=${${(M)col#*=}%=}
-    col=${col#$key=}
+  local entry= key= value=
 
+  for entry in ${ls_colors[@]:/ln=target/$ls_defaults[ln]}; do
+    key=${${(M)entry#*=}%=}
+    value=${entry#$key=}
+
+    # Replace complex color codes with simple ones.
     # Order here matters. Otherwise, ...;<0-7> can eat the first char of 38;.. or 48;...
-    col=${col//(#b)'38;5;'(<8-15>)/$(( 82 + ${match[@][1]} ))}
-    col=${col//(#b)'38;5;'(<0-7>)/$(( 30 + ${match[@][1]} ))}
-    col=${col//(#b)'48;5;'(<8-15>)/$(( 92 + ${match[@][1]} ))}
-    col=${col//(#b)'48;5;'(<0-7>)/$(( 40 + ${match[@][1]} ))}
+    value=${value//(#b)'38;5;'(<8-15>)/$(( 82 + ${match[@][1]} ))}
+    value=${value//(#b)'38;5;'(<0-7>)/$(( 30 + ${match[@][1]} ))}
+    value=${value//(#b)'48;5;'(<8-15>)/$(( 92 + ${match[@][1]} ))}
+    value=${value//(#b)'48;5;'(<0-7>)/$(( 40 + ${match[@][1]} ))}
 
-    val=( ${(s:;:)col} )
-    ifg=$val[(i)(<30-39>|<90-97>)]
-    vfg=${val[ifg]:=39}
-    ibg=$val[(i)(<40-49>|<100-107>)]
-    vbg=${val[ibg]:=49}
-    if [[ $vbg != (<40-40>|<49-49>|<107-107>) ]]; then
-      (( val[ifg] = vbg - 10, val[ibg] = vfg + 10 ))
-      [[ $val[ifg] != (<40-47>) ]] &&
-          (( val[ifg] += 60 ))
-      if [[ $val[ibg] != (<40-40>|<49-49>|<107-107>) ]]; then
-        val[ibg]=48
-        for em in $color[italic] $color[bold] $color[underline]; do
-          if [[ -z $val[(r)${~:-"<$em-$em>"}] ]]; then
-            val+=( $em )
-            break
-          fi
-        done
-      fi
-    fi
-    val+=( $color[none] )
-    zcolor[$key]=${(j:;:)${(un@)val}}
+    zcolor[$key]=$value
   done
 }
 typeset -p zcolor

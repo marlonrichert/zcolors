@@ -253,10 +253,6 @@ typeset -p ZSH_HIGHLIGHT_STYLES
   unfunction print-style
 }
 
-# Workaround for https://github.com/ogham/exa/issues/959
-# `exa` uses $LS_COLORS, but does not support 90-97 or 100-107.
-LS_COLORS=${LS_COLORS//(#m)(<90-97>|<100-107>)/$(( MATCH / 10 - 6 ))8\;5\;$(( MATCH % 10 + 8 ))}
-
 typeset -p LS_COLORS
 
 

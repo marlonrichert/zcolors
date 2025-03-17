@@ -79,6 +79,10 @@ typeset -gA zcolor=()
 }
 typeset -p zcolor
 
+export GREP_COLOR=$zcolor[bd]
+export GREP_COLORS="mt=$GREP_COLOR"  # GNU grep >= 3
+typeset -p GREP_COLOR GREP_COLORS
+
 if [[ $OSTYPE != linux-gnu ]]; then
   export LSCOLORS=  # The BSD version does not have an underscore.
   () {
@@ -110,6 +114,43 @@ if [[ $OSTYPE != linux-gnu ]]; then
   }
   typeset -p LSCOLORS
 fi
+
+zcolors.gnu-to-zle() {
+  local -i num=
+  local fg= bg= bold= underline=
+  for num in ${(s.;.)zcolor[$1]}; do
+    case $num in
+      ( <1-1> )     bold=bold               ;;
+      ( <3-9> )     underline=underline     ;;
+      ( <39-39> )   fg=default              ;;
+      ( <49-49> )   bg=default              ;;
+      ( <30-37> )   fg=$(( num - 30 ))      ;;
+      ( <40-47> )   bg=$(( num - 40 ))      ;;
+      ( <90-97> )   fg=$(( num - 90 + 8 ))  ;;
+      ( <100-107> ) bg=$(( num - 100 + 8 )) ;;
+    esac
+  done
+  reply=( ${fg:+fg=$fg} ${bg:+bg=$bg} $bold $underline )
+}
+
+local -A zle_colors=(
+    special ln
+    isearch bd
+    paste   ow
+    region  ow
+    suffix  ow
+)
+
+typeset -ga zle_highlight=()
+() {
+  local -aU reply=()
+  local context= type=
+  for context type in "${(kv@)zle_colors}"; do
+    zcolors.gnu-to-zle "$type"
+    zle_highlight+=( "${context}:${(j:,:)reply}" )
+  done
+}
+typeset -p zle_highlight
 
 typeset -gA ZSH_HIGHLIGHT_STYLES=()
 local -A syntax_colors=(
@@ -164,32 +205,24 @@ local -A syntax_colors=(
     bracket-level-5 so
     cursor-matchingbracket bd
 )
-
 () {
-  local -aU spec=()
-  local -i num=
+  local -aU reply=()
   local token= type= fg= bg= bold= underline=
   for token type in "${(kv@)syntax_colors}"; do
-    fg= bg= bold= underline=
-    for num in ${(s.;.)zcolor[$type]}; do
-      case $num in
-        ( <1-1> )     bold=bold               ;;
-        ( <3-9> )     underline=underline     ;;
-        ( <39-39> )   fg=default              ;;
-        ( <49-49> )   bg=default              ;;
-        ( <30-37> )   fg=$(( num - 30 ))      ;;
-        ( <40-47> )   bg=$(( num - 40 ))      ;;
-        ( <90-97> )   fg=$(( num - 90 + 8 ))  ;;
-        ( <100-107> ) bg=$(( num - 100 + 8 )) ;;
-      esac
-    done
-    spec=( ${fg:+fg=$fg} ${bg:+bg=$bg} $bold $underline )
-    ZSH_HIGHLIGHT_STYLES[$token]="${(j:,:)spec}"
+    zcolors.gnu-to-zle "$type"
+    ZSH_HIGHLIGHT_STYLES[$token]="${(j:,:)reply}"
     [[ -z ZSH_HIGHLIGHT_STYLES[$token] ]] &&
         ZSH_HIGHLIGHT_STYLES[$token]=none
   done
 }
 typeset -p ZSH_HIGHLIGHT_STYLES
+
+zcolors.print-style() {
+  zstyle "$@"
+  [[ $1 == -e ]] &&
+      shift
+  zstyle -L $1 $2
+}
 
 () {
   local -A comp_colors=(
@@ -233,16 +266,9 @@ typeset -p ZSH_HIGHLIGHT_STYLES
       "ma=$color[brightwhite];$color[bg-blue]"
   )
 
-  print-style() {
-    zstyle "$@"
-    [[ $1 == -e ]] &&
-        shift
-    zstyle -L $1 $2
-  }
-  print-style ':completion:*:default' list-colors "$zls_colors[@]"
-  print-style ':completion:*' group-name ''
-  print-style ':completion:*' list-separator ' '
-  unfunction print-style
+  zcolors.print-style ':completion:*:default' list-colors "$zls_colors[@]"
+  zcolors.print-style ':completion:*' group-name ''
+  zcolors.print-style ':completion:*' list-separator ' '
 }
 
 typeset -p LS_COLORS
@@ -352,3 +378,5 @@ fi
   done
   git config --global diff.colorMoved zebra
 }
+
+unfunction -m zcolors.\*

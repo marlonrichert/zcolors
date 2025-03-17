@@ -5,8 +5,6 @@ customizing your colors?  No worries: Z Colors comes with an excellent default t
 
 > Enjoy this software? [Become a sponsor!](https://github.com/sponsors/marlonrichert)
 
-![screen shot](screenshot.png)
-
 ## Requirements
 If you use `$LS_COLORS`, then the values for `di`, `ln`, `so`, `pi`, `ex`, `bd`, `cd`, `su`, `sg`,
 `tw` and `ow` need to contain 3- or 4-bit colors only.  8- and 24-bit colors are currently _not_

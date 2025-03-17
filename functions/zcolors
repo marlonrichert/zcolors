@@ -44,7 +44,7 @@ local -A ls_defaults=(
     'so'  "$color[none];$color[magenta]"
     'pi'  "$color[none];$color[yellow]"
     'cd'  "$color[none];$color[yellow];$color[bold]"
-    'bd'  "$color[none];$color[yellow];$color[italic]"
+    'bd'  "$color[none];$color[bg-brightyellow];$color[black]"
 )
 ls_defaults+=(
     '*.DS_Store'  "$ls_defaults[mi]"
@@ -154,7 +154,7 @@ local -A syntax_colors=(
     redirection       pi
     commandseparator  pi
     numeric-fd        cd
-    named-fd          bd
+    named-fd          cd
 
     bracket-error   or
     bracket-level-1 so
@@ -162,6 +162,7 @@ local -A syntax_colors=(
     bracket-level-3 so
     bracket-level-4 so
     bracket-level-5 so
+    cursor-matchingbracket bd
 )
 
 () {
@@ -187,8 +188,6 @@ local -A syntax_colors=(
     [[ -z ZSH_HIGHLIGHT_STYLES[$token] ]] &&
         ZSH_HIGHLIGHT_STYLES[$token]=none
   done
-
-  ZSH_HIGHLIGHT_STYLES[cursor-matchingbracket]='fg=0,bg=11'  # Black on bright yellow
 }
 typeset -p ZSH_HIGHLIGHT_STYLES
 

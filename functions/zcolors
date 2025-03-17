@@ -261,7 +261,7 @@ fi
       branch.local          "$zcolor[di]"
       branch.upstream       "$zcolor[ln]"
       branch.remote         "$zcolor[ln]"
-      branch.plain          "$zcolor[di]"
+      branch.plain          "$zcolor[no]"
 
       decorate.HEAD         "$zcolor[ow]"
       decorate.branch       "$zcolor[di]"

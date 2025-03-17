@@ -52,9 +52,10 @@ ls_defaults+=(
 )
 () {
   local k= v=
-  for k v in ${(kv@)ls_defaults}; do
-    [[ -z $ls_colors[(r)$k=*] ]] &&
-        ls_colors+=( "$k=$v" )
+  for k v in "${(kv@)ls_defaults}"; do
+    if [[ -z $ls_colors[(r)$k=*] ]]; then
+      ls_colors+=( "$k=$v" )
+    fi
   done
 }
 
@@ -78,27 +79,32 @@ typeset -gA zcolor=()
 }
 typeset -p zcolor
 
-if [[ $OSTYPE != linux-gnu && -z $LSCOLORS ]]; then
+if [[ $OSTYPE != linux-gnu ]]; then
   export LSCOLORS=  # The BSD version does not have an underscore.
   () {
-    local -i num= upper=65 lower=97
-    local gnu= num= fg= bg= bold= reverse=
-    for gnu in di ln so pi ex bd cd su sg tw ow; do
-      fg=x bg=x bold= reverse=
-      for num in ${(s:;:)zcolor[$gnu]}; do
+    local -i num= bold= reverse= upper=65 lower=97
+    local type= fg= bg=
+    for type in di ln so pi ex bd cd su sg tw ow; do
+      fg=x bg=x bold=0 reverse=0
+      for num in ${(s:;:)zcolor[$type]}; do
         case $num in
-          ( <1-1> )         bold=yes                ;;
-          ( <3-9> )         reverse=yes             ;;
+          ( <1-1> )         bold=1                ;;
+          ( <3-9> )         reverse=1             ;;
           ( <30-37> )       fg=${(#):-lower+num%10} ;;
           ( <40-47> )       bg=${(#):-lower+num%10} ;;
           ( <90-97> )       fg=${(#):-upper+num%10} ;;
           ( <100-107> )     bg=${(#):-upper+num%10} ;;
         esac
       done
-      [[ -n $reverse ]] &&
-          for fg bg in $bg $fg; do done
-      [[ -n $bold && fg != x ]] &&
-          fg=${(U)fg}
+
+      if (( reverse )); then
+        for fg bg in "$bg" "$fg"; do done  # Swap FG and BG.
+      fi
+
+      if [[ bold -eq 1 && fg != x ]]; then
+        fg=${(U)fg}  # Convert bold to bright FG.
+      fi
+
       LSCOLORS+=$fg${(L)bg}
     done
   }
@@ -157,13 +163,14 @@ local -A syntax_colors=(
     bracket-level-4 so
     bracket-level-5 so
 )
+
 () {
   local -aU spec=()
   local -i num=
-  local tok= col= fg= bg= bold= underline=
-  for tok col in "${(kv@)syntax_colors}"; do
-    fg= bg= bold= underline= col=$zcolor[$col]
-    for num in ${(s.;.)col}; do
+  local token= type= fg= bg= bold= underline=
+  for token type in "${(kv@)syntax_colors}"; do
+    fg= bg= bold= underline=
+    for num in ${(s.;.)zcolor[$type]}; do
       case $num in
         ( <1-1> )     bold=bold               ;;
         ( <3-9> )     underline=underline     ;;
@@ -176,11 +183,12 @@ local -A syntax_colors=(
       esac
     done
     spec=( ${fg:+fg=$fg} ${bg:+bg=$bg} $bold $underline )
-    ZSH_HIGHLIGHT_STYLES[$tok]="${(j:,:)spec}"
-    [[ -z ZSH_HIGHLIGHT_STYLES[$tok] ]] &&
-        ZSH_HIGHLIGHT_STYLES[$tok]=none
+    ZSH_HIGHLIGHT_STYLES[$token]="${(j:,:)spec}"
+    [[ -z ZSH_HIGHLIGHT_STYLES[$token] ]] &&
+        ZSH_HIGHLIGHT_STYLES[$token]=none
   done
-  ZSH_HIGHLIGHT_STYLES[cursor-matchingbracket]=fg=0,bg=11
+
+  ZSH_HIGHLIGHT_STYLES[cursor-matchingbracket]='fg=0,bg=11'  # Black on bright yellow
 }
 typeset -p ZSH_HIGHLIGHT_STYLES
 
@@ -210,10 +218,10 @@ typeset -p ZSH_HIGHLIGHT_STYLES
       "(events)=(|-)<->(#b)(*)=$zcolor[no]=$zcolor[mi]"
       "(history-lines)=[[:space:]]#(#b)(<->) *=$zcolor[no]=$zcolor[mi]"
   )
-  local comp= col=
-  for comp col in ${(kv@)comp_colors}; do
+  local comp= entry=
+  for comp entry in ${(kv@)comp_colors}; do
     zls_colors+=(
-        "($comp)=(#b)(*[^ ]~*  *|)[ ]#(*)=$zcolor[no]=$zcolor[$col]=$zcolor[mi]"
+        "($comp)=(#b)(*[^ ]~*  *|)[ ]#(*)=$zcolor[no]=$zcolor[$entry]=$zcolor[mi]"
     )
   done
 
@@ -242,8 +250,9 @@ typeset -p LS_COLORS
 
 
 # Workaround for "error: could not lock config file: File exists".
-[[ -f $XDG_CONFIG_HOME/git/config.lock || -f ~/.gitconfig.lock ]] &&
-    return
+if [[ -f $XDG_CONFIG_HOME/git/config.lock || -f ~/.gitconfig.lock ]]; then
+  return
+fi
 
 
 () {

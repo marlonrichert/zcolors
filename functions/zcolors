@@ -8,6 +8,7 @@ if [[ ! -v color ]]; then
   colors
 fi
 
+# Add bright versions of foreground and background colors to $color.
 () {
   local -i i=
   local name= code=
@@ -20,30 +21,34 @@ fi
   done
   color[03]=italic
   color[italic]=03
+  color[dim]=$color[faint]
 }
+
 typeset -p color
 
 export -UT LS_COLORS=$1 ls_colors
 
 local -A ls_defaults=(
-    'no'  "$color[none];$color[normal];$color[default]"
-    'fi'  "$color[none];$color[normal];$color[default]"
-    'mi'  "$color[none];$color[default];$color[faint]"
-    'or'  "$color[none];$color[red];$color[italic]"
+    'no'  "$color[none];$color[default];$color[normal]"
+    'fi'  "$color[none];$color[default];$color[normal]"
+    'mi'  "$color[none];$color[default];$color[dim]"
+    'or'  "$color[none];$color[red]"
     'ex'  "$color[none];$color[brightgreen]"
     'sg'  "$color[none];$color[brightyellow]"
     'su'  "$color[none];$color[brightred]"
-    'st'  "$color[none];$color[blue];$color[faint]"
-    'di'  "$color[none];$color[blue]"
-    'tw'  "$color[none];$color[blue];$color[underline]"
-    'ow'  "$color[none];$color[blue];$color[underline];$color[italic]"
+    'di'  "$color[none];$color[brightblue]"
+    'st'  "$color[none];$color[blue]"
+    'tw'  "$color[none];$color[bg-blue];$color[white]"
+    'ow'  "$color[none];$color[bg-blue];$color[brightwhite]"
     'ln'  "$color[none];$color[cyan]"
     'so'  "$color[none];$color[magenta]"
     'pi'  "$color[none];$color[yellow]"
     'cd'  "$color[none];$color[yellow];$color[bold]"
     'bd'  "$color[none];$color[yellow];$color[italic]"
-    '*.DS_Store'  "$color[none];$color[faint]"
-    '*.zwc'       "$color[none];$color[faint]"
+)
+ls_defaults+=(
+    '*.DS_Store'  "$ls_defaults[mi]"
+    '*.zwc'       "$ls_defaults[mi]"
 )
 () {
   local k= v=

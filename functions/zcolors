@@ -32,22 +32,22 @@ typeset -p color
 export -UT LS_COLORS=$1 ls_colors
 
 local -A ls_defaults=(
-    'no'  "$color[none];$color[default];$color[normal]"
-    'fi'  "$color[none];$color[default];$color[normal]"
-    'mi'  "$color[none];$color[default];$color[dim]"
-    'or'  "$color[none];$color[red]"
-    'ex'  "$color[none];$color[brightgreen]"
-    'sg'  "$color[none];$color[brightyellow]"
-    'su'  "$color[none];$color[brightred]"
-    'di'  "$color[none];$color[brightblue]"
-    'st'  "$color[none];$color[blue]"
-    'tw'  "$color[none];$color[bg-blue];$color[white]"
-    'ow'  "$color[none];$color[bg-blue];$color[brightwhite]"
-    'ln'  "$color[none];$color[cyan]"
-    'so'  "$color[none];$color[magenta]"
-    'pi'  "$color[none];$color[yellow]"
-    'cd'  "$color[none];$color[yellow];$color[bold]"
-    'bd'  "$color[none];$color[bg-brightyellow];$color[black]"
+    'no'  "$color[default]"
+    'fi'  "$color[default]"
+    'mi'  "$color[brightblack]"
+    'or'  "$color[red]"
+    'ex'  "$color[brightgreen]"
+    'sg'  "$color[brightyellow]"
+    'su'  "$color[brightred]"
+    'di'  "$color[brightblue]"
+    'st'  "$color[blue]"
+    'tw'  "$color[bg-blue];$color[white]"
+    'ow'  "$color[bg-blue];$color[brightwhite]"
+    'ln'  "$color[cyan]"
+    'so'  "$color[magenta]"
+    'pi'  "$color[yellow]"
+    'cd'  "$color[yellow];$color[bold]"
+    'bd'  "$color[bg-brightyellow];$color[black]"
 )
 ls_defaults+=(
     '*.DS_Store'  "$ls_defaults[mi]"
@@ -266,7 +266,8 @@ zcolors.print-style() {
       "tc=$zcolor[$syntax_colors[path_pathseparator]]"
       "sp=$zcolor[no]"
       "sa=$zcolor[$syntax_colors[suffix-alias]]"
-      "ma=$color[brightwhite];$color[bg-blue]"
+      "ma=$zcolor[ow]"
+      $'lc=\e['"$color[none];$color[normal];"
   )
 
   zcolors.print-style ':completion:*:default' list-colors "$zls_colors[@]"

@@ -172,12 +172,12 @@ local -A syntax_colors=(
     precommand              su
     reserved-word           su
 
-    path_prefix               st
-    path_prefix_pathseparator mi
+    autodirectory             di
     path                      di
-    path_pathseparator        no
+    path_pathseparator        fi
+    path_prefix               mi
+    path_prefix_pathseparator mi
     globbing                  tw
-    autodirectory             ow
 
     global-alias                  ln
     rc-quote                      ln

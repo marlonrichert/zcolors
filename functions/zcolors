@@ -22,6 +22,9 @@ fi
   color[03]=italic
   color[italic]=03
   color[dim]=$color[faint]
+
+  # $color defines 'gray' and 'grey', but these are not standard colors.
+  unset 'color[gray]' 'color[grey]' 'color[bg-gray]' 'color[bg-grey]'
 }
 
 typeset -p color

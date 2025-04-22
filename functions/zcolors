@@ -29,7 +29,7 @@ fi
 
 typeset -p color
 
-export -UT LS_COLORS=$1 ls_colors
+export -UT LS_COLORS ls_colors=()
 
 local -A ls_defaults=(
     'no'  "$color[default]"

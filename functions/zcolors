@@ -242,17 +242,17 @@ zcolors.print-style() {
 () {
   local -A comp_colors=(
       'aliases|builtins|executables|functions|commands'
-                        $syntax_colors[arg0]
-      'suffix-aliases'  $syntax_colors[suffix-alias]
-      'options'         $syntax_colors[single-hyphen-option]
-      'reserved-words'  $syntax_colors[reserved-word]
+                        "$syntax_colors[arg0]"
+      'suffix-aliases'  "$syntax_colors[suffix-alias]"
+      'options'         "$syntax_colors[single-hyphen-option]"
+      'reserved-words'  "$syntax_colors[reserved-word]"
 
-      'named-directories' $syntax_colors[path]
-      'glob(flags|quals)' $syntax_colors[globbing]
+      'named-directories' "$syntax_colors[path]"
+      'glob(flags|quals)' "$syntax_colors[globbing]"
 
       'global-aliases|modifiers|parameters'
-                          $syntax_colors[global-alias]
-      'file-descriptors'  $syntax_colors[numeric-fd]
+                          "$syntax_colors[global-alias]"
+      'file-descriptors'  "$syntax_colors[numeric-fd]"
 
       '*local*~*director*'        di
       '*(branch|head)*~*remote*'  di
@@ -279,7 +279,7 @@ zcolors.print-style() {
       "sp=$zcolor[no]"
       "sa=$zcolor[$syntax_colors[suffix-alias]]"
       "ma=$zcolor[ow]"
-      $'lc=\e['"$color[none];$color[normal];"
+      $'lc=\e['"$zcolor[no];" 'rc=m'
   )
 
   zcolors.print-style ':completion:*:default' list-colors "$zls_colors[@]"

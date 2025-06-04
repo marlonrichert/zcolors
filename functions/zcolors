@@ -39,8 +39,8 @@ typeset -p color
 export -UT LS_COLORS ls_colors=()
 
 local -A ls_defaults=(
-    'no'  "$color[default]"
-    'fi'  "$color[default]"
+    'no'  "$color[none]"
+    'fi'  "$color[white]"
     'mi'  "$color[brightblack]"
     'or'  "$color[red]"
     'ex'  "$color[brightgreen]"
@@ -127,7 +127,7 @@ fi
 
 zcolors.gnu-to-zle() {
   local -i num=
-  local fg= bg= bold= underline=
+  local fg=default bg=default bold= underline=
   for num in ${(s.;.)zcolor[$1]}; do
     case $num in
       ( <1-1> )     bold=bold               ;;
@@ -140,7 +140,7 @@ zcolors.gnu-to-zle() {
       ( <100-107> ) bg=$(( num - 100 + 8 )) ;;
     esac
   done
-  reply=( ${fg:+fg=$fg} ${bg:+bg=$bg} $bold $underline )
+  reply=( none "fg=$fg" "bg=$bg" $bold $underline )
 }
 
 local -A zle_colors=(
@@ -182,7 +182,7 @@ local -A syntax_colors=(
     autodirectory             di
     path                      di
     path_pathseparator        fi
-    path_prefix               mi
+    path_prefix               st
     path_prefix_pathseparator mi
     globbing                  tw
 

@@ -11,13 +11,20 @@ fi
 # Add bright versions of foreground and background colors to $color.
 () {
   local -i i=
-  local name= code=
+  local name= fgcode= bgcode= fgname= bgname=
   for (( i = 0; i <= 7; i++ )); do
     name=$color[$(( i + 30 ))]
-    for code name in $(( i + 90 )) "bright$name" $(( i + 100 )) "bg-bright$name"; do
-      color[$code]="$name"
-      color[$name]="$code"
-    done
+
+    fgcode=$(( i + 90 ))
+    fgname="bright$name"
+    color[$fgcode]="$fgname"
+    color[$fgname]="$fgcode"
+    color[fg-$fgname]="$fgcode"
+
+    bgcode=$(( i + 100 ))
+    bgname="bg-bright$name"
+    color[$bgcode]="$bgname"
+    color[$bgname]="$bgcode"
   done
   color[03]=italic
   color[italic]=03

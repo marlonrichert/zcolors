@@ -227,6 +227,11 @@ local -A syntax_colors=(
 }
 typeset -p ZSH_HIGHLIGHT_STYLES
 
+typeset -g ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE
+zcolors.gnu-to-zle 'mi'
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="${(j:,:)reply}"
+typeset -p ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE
+
 zcolors.print-style() {
   zstyle "$@"
   [[ $1 == -e ]] &&

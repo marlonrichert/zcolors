@@ -7,7 +7,7 @@ zcolors.plugin() {
   autoload -Uz ${${(%):-%x}:P:h}/functions/[[:alpha:]]*~*.zwc
 
   if whence -p less > /dev/null && (( ${${=$( less -V )}[2]} >= 581 )); then
-    export -T LESS less ' '
+    export -UT LESS less ' '
 
     # [S]earch results: blac[k] on bright [Y]ellow
     # [P]rompt: bright [W]hite on [b]lue

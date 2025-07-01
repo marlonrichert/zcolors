@@ -73,7 +73,7 @@ typeset -gA zcolor=()
 () {
   local entry= key= value=
 
-  for entry in ${ls_colors[@]:/ln=target/$ls_defaults[ln]}; do
+  for entry in ${ls_colors[@]:/ln=target/ln=$ls_defaults[ln]}; do
     key=${${(M)entry#*=}%=}
     value=${entry#$key=}
 
@@ -304,12 +304,12 @@ fi
       branch.remote         "$zcolor[ln]"
       branch.plain          "$zcolor[no]"
 
-      decorate.HEAD         "$zcolor[ow]"
+      decorate.HEAD         "$zcolor[tw]"
       decorate.branch       "$zcolor[di]"
       decorate.remotebranch "$zcolor[ln]"
       decorate.tag          "$zcolor[so]"
       decorate.grafted      "$zcolor[or]"
-      decorate.stash        "$zcolor[mi]"
+      decorate.stash        "$zcolor[pi]"
 
       diff.commit                     "$zcolor[pi]"
       diff.meta                       "$zcolor[mi]"

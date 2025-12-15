@@ -315,24 +315,24 @@ fi
       diff.meta                       "$zcolor[mi]"
       diff.frag                       "$zcolor[mi]"
       diff.func                       "$zcolor[mi]"
-      diff.context                    "$zcolor[no]"
-      diff.contextDimmed              "$zcolor[no];$color[dim]"
-      diff.contextBold                "$zcolor[no];$color[bold]"
-      diff.new                        "$color[brightwhite];$color[bg-green]"
-      diff.newDimmed                  "$color[brightwhite];$color[bg-green];$color[dim]"
-      diff.newBold                    "$color[brightwhite];$color[bg-green];$color[bold]"
-      diff.newMoved                   "$color[brightwhite];$color[bg-magenta]"
-      diff.newMovedDimmed             "$color[brightwhite];$color[bg-magenta];$color[dim]"
-      diff.newMovedAlternative        "$color[brightwhite];$color[bg-blue]"
-      diff.newMovedAlternativeDimmed  "$color[brightwhite];$color[bg-blue];$color[dim]"
-      diff.old                        "$color[brightwhite];$color[bg-red]"
-      diff.oldDimmed                  "$color[brightwhite];$color[bg-red];$color[dim]"
-      diff.oldBold                    "$color[brightwhite];$color[bg-red];$color[bold]"
-      diff.oldMoved                   "$color[brightwhite];$color[bg-yellow]"
-      diff.oldMovedDimmed             "$color[brightwhite];$color[bg-yellow];$color[dim]"
-      diff.oldMovedAlternative        "$color[brightwhite];$color[bg-brightblack]"
-      diff.oldMovedAlternativeDimmed  "$color[brightwhite];$color[bg-brightblack];$color[dim]"
-      diff.whitespace                 "$color[bg-brightred]"
+      diff.context                    "$color[normal]"
+      diff.contextDimmed              "$color[normal];$color[dim]"
+      diff.contextBold                "$color[normal];$color[bold]"
+      diff.new                        "$color[brightgreen];$color[bg-black]"
+      diff.newDimmed                  "$color[brightgreen]"
+      diff.newBold                    "$color[brightgreen];$color[bg-black];$color[bold]"
+      diff.newMoved                   "$color[brightyellow];$color[bg-black]"
+      diff.newMovedDimmed             "$color[brightyellow]"
+      diff.newMovedAlternative        "$color[brightcyan];$color[bg-black]"
+      diff.newMovedAlternativeDimmed  "$color[brightyellow]"
+      diff.old                        "$color[red];$color[bg-black]"
+      diff.oldDimmed                  "$color[red];$color[bg-black];$color[dim]"
+      diff.oldBold                    "$color[red];$color[bg-black];$color[bold]"
+      diff.oldMoved                   "$color[yellow];$color[bg-black]"
+      diff.oldMovedDimmed             "$color[yellow];$color[bg-black];$color[dim]"
+      diff.oldMovedAlternative        "$color[cyan];$color[bg-black]"
+      diff.oldMovedAlternativeDimmed  "$color[cyan];$color[bg-black];$color[dim]"
+      diff.whitespace                 "$color[bg-yellow]"
 
       # grep.column
       # grep.context
@@ -392,7 +392,7 @@ fi
       git config --global --unset "color.$slot"
     fi
   done
-  git config --global diff.colorMoved zebra
+  git config --global diff.colorMoved dimmed-zebra
 }
 
 unfunction -m zcolors.\*

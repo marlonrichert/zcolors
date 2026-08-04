@@ -1,13 +1,10 @@
 
 # 🌈 Z Colors
 
-Use your Gnu `$LS_COLORS` to generate a coherent theme for `git`, `less`, `grep`, and your Zsh
-prompt, completions and syntax highlighting. Don't know how to or don't feel like customizing your colors?
-No worries: Z Colors comes with an excellent default theme, too.
+Tools to generate a coherent theme `git`, `less`, `grep`, and your Zsh
+prompt, completions and syntax highlighting
 
-Once you've [installed](#installation) Z Colors, then your theme is automatically applied to `git`,
-`less`, `grep`, and Zsh completions and [syntax highlighting](#requirements). No other steps are
-required. (For using Z Colors in your prompt, [see below](#prompt-colors).)
+Also includes convienences for working with ANSI colors in general.
 
 > Do you enjoy using this software? Then please consider to [become a
 > sponsor](https://github.com/sponsors/marlonrichert). 💝
@@ -15,64 +12,58 @@ required. (For using Z Colors in your prompt, [see below](#prompt-colors).)
 
 ## Requirements
 
-If you use `$LS_COLORS`, then the values for `di`, `ln`, `so`, `pi`, `ex`, `bd`, `cd`, `su`, `sg`,
-`tw` and `ow` need to contain 3- or 4-bit colors only.  8- and 24-bit colors are currently _not_
-supported!
-
-Completion highlighting requires Zsh's ["new" completion
-system](https://zsh.sourceforge.io/Doc/Release/Completion-System.html).
-
-Syntax highlighting requires
-[`zsh-syntax-highlighting`](https://github.com/zsh-users/zsh-syntax-highlighting).
+- For completion highlighting: Zsh's ["new" completion
+  system](https://zsh.sourceforge.io/Doc/Release/Completion-System.html).
+- For command line highlighting:
+  [`zsh-syntax-highlighting`](https://github.com/zsh-users/zsh-syntax-highlighting).
 
 
 ## Installation
 
-1.  Open a terminal.
-
-1.  Run:
-    ```sh
-    cd ~/Repos  # or wherever you keep your Git repos/Zsh plugins
-    git clone https://github.com/marlonrichert/zcolors.git
-    ```
-
-1.  Complete the steps for [customizing your theme](#customizing-your-theme).
-
-1.  Add to your `~/.zshrc` file:
-    ```sh
-    source ~/Repos/zcolors/zcolors.plugin.zsh
-    source ${$XDG_CACHE_HOME:=~/.cache}/zcolors
-    ```
-
-Then start a new terminal or shell to enjoy your theme.
+To install, simply clone the repo:
+```
+git clone https://github.com/marlonrichert/zcolors.git
+```
 
 
-## Customizing your theme
+## Usage
 
-Whenever you want make changes to your theme, do the following:
+Z Colors' main usage is to generate a theme:
 
-1.  In your terminal, set `$LS_COLORS` to your desired value.
+1. `cd` into the repo.
 
-1.  Run:
-    ```sh
-    autoload -Uz ~/Repos/zcolors/functions/zcolors
-    zcolors ${(q+)LS_COLORS} >| ${$XDG_CACHE_HOME:=~/.cache}/zcolors
-    ```
+1. To generate the default theme, run:
+   ```
+   zcolors > ~/zshtheme
+   ```
+   Alternatively, to generate a custom theme based on your GNU `$LS_COLORS`, run:
+   ```
+   zcolors "$LS_COLORS" > ~/zsh_theme
+   ```
+   ⚠️ Note:
+   - Your `$LS_COLORS` values for `di`, `ln`, `so`, `pi`, `ex`, `bd`, `cd`, `su`, `sg`, `tw` and
+     `ow` need to contain 3- or 4-bit colors only. 8- and 24-bit colors are currently _not_
+     supported!
+   - `zcolors` will generate BSD `$LSCOLORS` for you, but you cannot pass it as input!
 
-Then start a new terminal or shell to enjoy your new theme.
+1. Add to your `.zshrc` file:
+   ```
+   source zshtheme
+   ```
+
+1. Close your current shell and open a new one.
+
+Repeat these steps whenever you want to update your theme.
+
+Additionally to configuring your theme, doing the above also exposes the following array and
+functions.
 
 
-## Updating
+### `$zcolor
+An associative array that contains your theme values for file types `di`, `ln`, `so`, `pi`, `ex`,
+`bd`, `cd`, `su`, `sg`, `tw` and `ow`.
 
-1.  Open a terminal and run `git -C ~/Repos/zcolors pull`.
-1.  Complete the steps for [customizing your theme](#customizing-your-theme).
-
-
-# Prompt colors
-
-For adding colors to your prompt, Z Colors provides an associative array `$zcolor` containing the
-theme values for file types `di`, `ln`, `so`, `pi`, `ex`, `bd`, `cd`, `su`, `sg`, `tw` and `ow`.
-Here's an example of how to use it:
+Example:
 ```sh
 # $'...': string with support for `print` escape codes
 # %{<esc>%}: Tell the prompt that <esc> is zero-width output.
@@ -81,3 +72,37 @@ Here's an example of how to use it:
 # %#: `%` for normal user, `#` for root
 PS1=$'%{\e['$zcolor[di]$'m%}%~%{\e[m%}/ %# '
 ```
+
+### `color`
+
+Converts a `$color` entry to ANSI and prints it.
+
+Example usage:
+```sh
+color dim
+print 'This text is now dim'
+color none
+```
+
+### `lscolor`
+
+Prints the ANSI highlighting for a particular file type.
+
+Example usage:
+```sh
+print 'The current directory is '
+lscolor di
+print $PWD
+color none
+```
+
+
+## Updating
+
+1. `cd` into the repo and run `git pull`.
+
+1. Repeat the steps under [Usage](#usage).
+
+
+## Author and license
+See the [LICENSE file](LICENSE) for more details.

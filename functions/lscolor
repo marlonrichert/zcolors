@@ -1,2 +1,0 @@
-#!/bin/zsh
-print -nr - $'\e['${ls_colors[(R)$1=*]#$1=}m
